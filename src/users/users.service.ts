@@ -18,7 +18,7 @@ export class UsersService {
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(createUserDto.password, saltOrRounds);
     createUserDto.password = hash;
-    const newUserObj = await this.userRepository.createUser(createUserDto);
+    const newUserObj = await this.userRepository.create(createUserDto);
     if (!newUserObj) throw new InternalServerErrorException();
     const newUser = newUserObj['_doc'];
     const { password, createdAt, updatedAt, ...newUser2 } = newUser;
@@ -32,14 +32,7 @@ export class UsersService {
     return user;
   }
 
-  findAll() {
-    return this.userRepository.find({});
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
+  // FIN AND UPDATE
   findOneAndUpdate(id, updateUserDto) {
     return this.userRepository.findOneAndUpdate(id, updateUserDto);
   }

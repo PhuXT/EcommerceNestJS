@@ -7,9 +7,16 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { get } from 'http';
+import {
+  ApiAcceptedResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { type } from 'os';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { IUser } from 'src/users/entities/user.entity';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
@@ -22,9 +29,12 @@ export class AuthController {
   // LOGIN
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @ApiBody({ type: LoginUserDto })
+  @ApiAcceptedResponse({
+    description: 'Return access token and infor user',
+  })
   async login(@Request() req) {
     return this.authService.login(req.user);
-    // return req.user;
   }
 
   // REGISTER
@@ -34,7 +44,8 @@ export class AuthController {
     return this.authService.regisrer(createUserDto);
   }
 
-  // verify
+  // VERIFY ACOUNT
+  @ApiCreatedResponse({ description: 'Return verify status' })
   @Get('verify')
   verify(@Query('token') token: string) {
     return this.authService.verify(token);

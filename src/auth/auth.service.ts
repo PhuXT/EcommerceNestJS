@@ -19,15 +19,19 @@ export class AuthService {
     const user = await this.usersService.findOneByEmail(email);
     const isMatch = await bcrypt.compare(pass, user.password);
     if (user && isMatch) {
-      const { password, createdAt, updatedAt, isActive, ...result } = user;
+      const { password, createdAt, updatedAt, ...result } = user['_doc'];
       return result;
     }
     return null;
   }
 
   async login(user: User) {
+    if (!user.isActive) {
+      return 'You need active account';
+    }
     const payload = { userName: user.userName, id: user._id };
     return {
+      user,
       accessToken: this.jwtService.sign(payload),
     };
   }
@@ -37,22 +41,20 @@ export class AuthService {
     const payload = { userName: newUser.userName, id: newUser._id };
     const verifyToken = this.jwtService.sign(payload);
     const linkVerify = `http://${process.env.HOST}/auth/verify?token=${verifyToken}`;
-    const isSended = await this.emailService.verify(newUser.email, linkVerify);
-    console.log(isSended);
+    await this.emailService.sendMessage(newUser.email, linkVerify);
     return newUser;
   }
 
   async verify(token: string) {
     const isVerify = this.jwtService.verify(token);
     if (!isVerify) {
-      return 'Link has been expried.';
+      return 'Link has been expried';
     }
     const user = this.jwtService.decode(token);
 
     await this.usersService.findOneAndUpdate(user['id'], {
       isActive: true,
     });
-
     return 'Account actived';
   }
 }

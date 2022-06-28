@@ -2,7 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { EntityRepository } from '../database/entity.repository';
-import { CreateUserDto, EmailDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { User, UserDocument } from './schemas/users.schema';
 
 export class UserRepository extends EntityRepository<UserDocument> {
@@ -10,9 +10,9 @@ export class UserRepository extends EntityRepository<UserDocument> {
     super(userModel);
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<User> | null {
+  async create(createUserDto: CreateUserDto): Promise<UserDocument> | null {
     try {
-      const user = await this.create(createUserDto);
+      const user = await super.create(createUserDto);
       return user;
     } catch (error) {
       throw new BadRequestException('Email already exist');

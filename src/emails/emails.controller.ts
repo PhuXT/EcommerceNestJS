@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 
 @Controller('emails')
 export class EmailsController {
