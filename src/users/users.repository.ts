@@ -10,10 +10,6 @@ export class UserRepository extends EntityRepository<UserDocument> {
     super(userModel);
   }
 
-  findByEmail(email: EmailDto): Promise<User> {
-    return this.findOne({ email });
-  }
-
   async createUser(createUserDto: CreateUserDto): Promise<User> | null {
     try {
       const user = await this.create(createUserDto);

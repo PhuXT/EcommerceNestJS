@@ -40,7 +40,8 @@ export class CreateUserDto {
 }
 
 export class EmailDto {
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: String, required: true })
+  @IsNotEmpty()
   @IsEmail()
   @IsString()
   email: string;

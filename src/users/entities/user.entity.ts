@@ -11,8 +11,8 @@ export class IUser extends Document {
   @ApiProperty()
   email: string;
 
-  @ApiProperty()
-  password: string;
+  // @ApiProperty()
+  // password: string;
 
   @ApiProperty()
   phone: string;
@@ -26,9 +26,9 @@ export class IUser extends Document {
   @ApiProperty()
   isActive: boolean;
 
-  @ApiProperty()
-  createdAt: Date;
+  // @ApiProperty()
+  // createdAt: Date;
 
-  @ApiProperty()
-  updatedAt: Date;
+  // @ApiProperty()
+  // updatedAt: Date;
 }
