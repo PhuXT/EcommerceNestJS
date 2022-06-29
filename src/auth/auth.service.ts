@@ -6,6 +6,8 @@ import { User } from 'src/users/schemas/users.schema';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from 'src/users/entities/user.entity';
 import { EmailsService } from 'src/emails/emails.service';
+import { ACTIVE_STATUS_ENUM } from 'src/users/users.constant';
+import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
@@ -24,18 +26,21 @@ export class AuthService {
     }
     return null;
   }
-
   async login(user: User) {
-    if (!user.isActive) {
+    if (user.status === ACTIVE_STATUS_ENUM.INACTIVE) {
       return 'You need active account';
     }
-    const payload = { userName: user.userName, id: user._id };
+    const payload = {
+      userName: user.userName,
+      id: user['_id'].toString(),
+      role: user.role,
+    };
+
     return {
       user,
       accessToken: this.jwtService.sign(payload),
     };
   }
-
   async regisrer(createUserDto: CreateUserDto): Promise<IUser> {
     const newUser = await this.usersService.create(createUserDto);
     const payload = { userName: newUser.userName, id: newUser._id };
@@ -53,7 +58,7 @@ export class AuthService {
     const user = this.jwtService.decode(token);
 
     await this.usersService.findOneAndUpdate(user['id'], {
-      isActive: true,
+      status: ACTIVE_STATUS_ENUM.ACTIVE,
     });
     return 'Account actived';
   }

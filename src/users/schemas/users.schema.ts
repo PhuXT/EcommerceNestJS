@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import mongoose, { Document } from 'mongoose';
+import { ACTIVE_STATUS_ENUM, ROLE_ENUM } from '../users.constant';
 
 export type UserDocument = User & Document;
 
@@ -23,11 +24,11 @@ export class User {
   @Prop({ default: '' })
   address: string;
 
-  @Prop({ default: false })
-  isAdmin: boolean;
+  @Prop({ default: ROLE_ENUM.USER })
+  role: ROLE_ENUM;
 
-  @Prop({ default: false })
-  isActive: boolean;
+  @Prop({ default: ACTIVE_STATUS_ENUM.INACTIVE })
+  status: ACTIVE_STATUS_ENUM;
 
   createdAt: Date;
 

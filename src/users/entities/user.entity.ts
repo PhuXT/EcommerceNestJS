@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import mongoose, { Document } from 'mongoose';
+import { ACTIVE_STATUS_ENUM, ROLE_ENUM } from '../users.constant';
 
 export class IUser extends Document {
   @ApiProperty()
@@ -21,10 +22,10 @@ export class IUser extends Document {
   address: string;
 
   @ApiProperty()
-  isAdmin: boolean;
+  isAdmin: ROLE_ENUM;
 
   @ApiProperty()
-  isActive: boolean;
+  isActive: ACTIVE_STATUS_ENUM;
 
   // @ApiProperty()
   // createdAt: Date;
