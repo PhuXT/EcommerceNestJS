@@ -9,6 +9,7 @@ import { EmailsModule } from './emails/emails.module';
 
 import { CategorysModule } from './categorys/categorys.module';
 import { MulterModule } from '@nestjs/platform-express/multer';
+import { VouchersModule } from './vouchers/vouchers.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,6 +23,7 @@ import { MulterModule } from '@nestjs/platform-express/multer';
     AuthModule,
     EmailsModule,
     CategorysModule,
+    VouchersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

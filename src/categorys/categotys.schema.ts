@@ -1,11 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { STATUS_ENUM } from './categorys.constant';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 export type CategotyDocument = Category & Document;
 
 @Schema({ timestamps: true })
 export class Category {
+  _id: mongoose.Schema.Types.ObjectId | string;
+
   @Prop({ required: true, unique: true })
   categoryName: string;
 
@@ -17,6 +19,10 @@ export class Category {
 
   @Prop({ required: true, unique: true })
   priority: number;
+
+  createdAt: Date;
+
+  updatedAt: Date;
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);

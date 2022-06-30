@@ -12,6 +12,7 @@ async function bootstrap() {
     .setTitle('Ecommerce')
     .setDescription('Ecommerce API')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   app.useGlobalPipes(new ValidationPipe());

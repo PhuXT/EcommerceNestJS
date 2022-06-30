@@ -10,11 +10,4 @@ import { RolesGuard } from 'src/auth/role.guard';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(ROLE_ENUM.ADMIN)
-  @Get(':email')
-  findOne(@Param('email') email) {
-    return this.usersService.findOneByEmail(email);
-  }
 }
