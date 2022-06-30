@@ -45,7 +45,7 @@ export class AuthService {
     const newUser = await this.usersService.create(createUserDto);
     const payload = { userName: newUser.userName, id: newUser._id };
     const verifyToken = this.jwtService.sign(payload);
-    const linkVerify = `http://${process.env.HOST}/auth/verify?token=${verifyToken}`;
+    const linkVerify = `http://${process.env.HOST}/api/${process.env.VERSION}/auth/verify?token=${verifyToken}`;
     await this.emailService.sendMessage(newUser.email, linkVerify);
     return newUser;
   }

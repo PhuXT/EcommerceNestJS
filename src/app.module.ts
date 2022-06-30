@@ -6,24 +6,24 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailsModule } from './emails/emails.module';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './auth/role.guard';
 
+import { CategorysModule } from './categorys/categorys.module';
+import { MulterModule } from '@nestjs/platform-express/multer';
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     MongooseModule.forRoot(process.env.MONGO_URL),
+    MulterModule.register({
+      dest: './uploadedFiles',
+    }),
     UsersModule,
     AuthModule,
     EmailsModule,
+    CategorysModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: RolesGuard,
-    // },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

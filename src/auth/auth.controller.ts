@@ -11,10 +11,8 @@ import {
   ApiAcceptedResponse,
   ApiBody,
   ApiCreatedResponse,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { type } from 'os';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { IUser } from 'src/users/entities/user.entity';
