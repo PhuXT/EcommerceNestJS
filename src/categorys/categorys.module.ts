@@ -12,5 +12,6 @@ import { MongooseModule } from '@nestjs/mongoose';
   ],
   providers: [CategorysService, CategoryRepository],
   controllers: [CategorysController],
+  exports: [CategorysService, CategoryRepository],
 })
 export class CategorysModule {}

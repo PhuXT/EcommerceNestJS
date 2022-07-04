@@ -7,7 +7,6 @@ import { JwtService } from '@nestjs/jwt';
 import { IUser } from 'src/users/entities/user.entity';
 import { EmailsService } from 'src/emails/emails.service';
 import { ACTIVE_STATUS_ENUM } from 'src/users/users.constant';
-import { use } from 'passport';
 
 @Injectable()
 export class AuthService {

@@ -24,6 +24,10 @@ export class CategorysService {
     return this.categoryRepository.findOneAndUpdate(categoryId, status);
   }
 
+  getCategory(categoryName: string): Promise<ICategory> {
+    return this.categoryRepository.findOne({ categoryName });
+  }
+
   async updatePriority(updateCategoryId, toCategoryBody) {
     const updateCategory = await this.categoryRepository.findOne({
       _id: updateCategoryId,
@@ -31,7 +35,7 @@ export class CategorysService {
     const toCategory = await this.categoryRepository.findOne({
       _id: toCategoryBody.categoryId,
     });
-    if (!updateCategory || toCategoryBody) {
+    if (!updateCategory || !toCategoryBody) {
       throw new BadGatewayException('Category not exist');
     }
 
