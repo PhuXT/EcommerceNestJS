@@ -1,34 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
-import mongoose, { Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-export class IVoucher extends Document {
-  @ApiProperty()
-  _id: mongoose.Schema.Types.ObjectId;
+export interface IVoucher {
+  _id?: mongoose.Schema.Types.ObjectId;
 
-  @ApiProperty()
   startTime: Date;
 
-  @ApiProperty()
   endTime: Date;
 
-  @ApiProperty()
   quantity: number;
 
-  @ApiProperty()
   discount: number;
 
-  @ApiProperty()
   categories: string[];
 
-  @ApiProperty()
   nameVoucher: string;
 
-  @ApiProperty()
   description: string;
 
-  @ApiProperty()
-  createdAt: Date;
+  createdAt?: Date;
 
-  @ApiProperty()
-  updatedAt: Date;
+  updatedAt?: Date;
 }

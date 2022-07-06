@@ -27,10 +27,6 @@ export class Voucher {
 
   @Prop()
   description: string;
-
-  createdAt: Date;
-
-  updatedAt: Date;
 }
 
 export const VoucherSchema = SchemaFactory.createForClass(Voucher);

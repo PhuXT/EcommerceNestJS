@@ -12,15 +12,14 @@ export class VouchersService {
     private categoryService: CategorysService,
   ) {}
 
-  async create(createVoucherDto: CreateVoucherDto): Promise<IVoucher> {
-    // CHƯA CHECK ĐƯỢC CATEGOTY TỒN TẠI HAY KHÔNG
+  async create(createVoucherDto: IVoucher): Promise<IVoucher> {
     // createVoucherDto.categories.forEach(async (categoryName) => {
     //   const category = await this.categoryService.getCategory(categoryName);
     //   console.log(category);
 
     //   if (!category) {
     //     throw new BadRequestException(`${categoryName} is not exist`);
-    //   }
+    //   }CreateVoucherDto
     // });
 
     return this.voucherRepository.create(createVoucherDto);

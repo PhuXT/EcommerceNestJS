@@ -32,6 +32,7 @@
     "@nestjs/passport": "^8.2.2",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.2.1",
+    "@types/mongoose-delete": "^0.5.9",
     "@types/nodemailer": "^6.4.4",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",

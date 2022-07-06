@@ -31,26 +31,25 @@ import { ROLE_ENUM } from 'src/users/users.constant';
 export class VouchersController {
   constructor(private readonly vouchersService: VouchersService) {}
 
-  @ApiCreatedResponse({ type: IVoucher, description: 'Return new voucher' })
+  @ApiCreatedResponse({ description: 'Return new voucher' })
   @Post()
   create(@Body() createVoucherDto: CreateVoucherDto): Promise<IVoucher> {
-    console.log(createVoucherDto);
     return this.vouchersService.create(createVoucherDto);
   }
 
-  @ApiOkResponse({ type: [IVoucher], description: 'Return list voucher' })
+  @ApiOkResponse({ description: 'Return list voucher' })
   @Get()
   findAll(): Promise<IVoucher[]> {
     return this.vouchersService.findAll();
   }
 
-  @ApiOkResponse({ type: IVoucher, description: 'Return voucher finded by id' })
+  @ApiOkResponse({ description: 'Return voucher finded by id' })
   @Get(':voucherId')
   findOne(@Param('voucherId') voucherId: string): Promise<IVoucher> {
     return this.vouchersService.findOne(voucherId);
   }
 
-  @ApiOkResponse({ type: IVoucher, description: 'Return voucher updated' })
+  @ApiOkResponse({ description: 'Return voucher updated' })
   @Patch(':voucherId')
   update(
     @Param('voucherId') voucherId: string,

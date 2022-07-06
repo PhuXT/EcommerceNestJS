@@ -10,6 +10,7 @@ import { EmailsModule } from './emails/emails.module';
 import { CategorysModule } from './categorys/categorys.module';
 import { MulterModule } from '@nestjs/platform-express/multer';
 import { VouchersModule } from './vouchers/vouchers.module';
+import { ItemsModule } from './items/items.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,6 +25,7 @@ import { VouchersModule } from './vouchers/vouchers.module';
     EmailsModule,
     CategorysModule,
     VouchersModule,
+    ItemsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

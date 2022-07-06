@@ -1,4 +1,4 @@
-export enum ACTIVE_STATUS_ENUM {
+export enum STATUS_ENUM {
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
 }

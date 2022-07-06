@@ -36,7 +36,7 @@ export class AuthController {
   }
 
   // REGISTER
-  @ApiCreatedResponse({ type: IUser, description: 'Return new user' })
+  // @ApiCreatedResponse({ type: IUser, description: 'Return new user' })
   @Post('register')
   async create(@Body() createUserDto: CreateUserDto): Promise<IUser> {
     return this.authService.regisrer(createUserDto);

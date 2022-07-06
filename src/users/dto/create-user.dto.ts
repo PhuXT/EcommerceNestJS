@@ -1,12 +1,18 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEmail,
+  IsEmpty,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MaxLength,
   MinLength,
+  validate,
+  Validate,
 } from 'class-validator';
+import { STATUS_ENUM } from 'src/categorys/categorys.constant';
+import { ROLE_ENUM } from '../users.constant';
 
 export class CreateUserDto {
   @ApiProperty({ required: true, type: String })
@@ -16,7 +22,6 @@ export class CreateUserDto {
 
   @ApiProperty({ required: true, type: String })
   @IsEmail()
-  @IsString()
   @IsNotEmpty()
   email: string;
 
@@ -28,13 +33,13 @@ export class CreateUserDto {
   })
   password: string;
 
-  @ApiProperty({ required: false, type: String })
+  @ApiPropertyOptional()
   @IsString()
   @MinLength(9)
   @MaxLength(11)
   phone?: string;
 
-  @ApiProperty({ required: false, type: String })
+  @ApiPropertyOptional()
   @IsString()
   address?: string;
 }
@@ -43,6 +48,5 @@ export class EmailDto {
   @ApiProperty({ type: String, required: true })
   @IsNotEmpty()
   @IsEmail()
-  @IsString()
   email: string;
 }

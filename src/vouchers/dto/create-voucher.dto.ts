@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
   IsDateString,
@@ -7,27 +7,27 @@ import {
 } from 'class-validator';
 
 export class CreateVoucherDto {
-  @ApiProperty({ type: Date, required: true })
+  @ApiProperty({ type: Date })
   @IsDateString()
   startTime: Date;
 
-  @ApiProperty({ type: Date, required: true })
+  @ApiProperty()
   @IsDateString()
   endTime: Date;
 
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty()
   @IsString()
   nameVoucher: string;
 
-  @ApiProperty({ type: String, required: false })
+  @ApiPropertyOptional()
   @IsString()
   description: string;
 
-  @ApiProperty({ type: Number, required: true })
+  @ApiProperty({ type: Number })
   @IsNumberString()
   quantity: number;
 
-  @ApiProperty({ type: Number, required: true })
+  @ApiProperty({ type: Number })
   @IsNumberString()
   discount: number;
 

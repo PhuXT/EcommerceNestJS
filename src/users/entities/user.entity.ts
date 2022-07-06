@@ -1,35 +1,42 @@
-import { ApiProperty } from '@nestjs/swagger';
-import mongoose, { Document } from 'mongoose';
-import { ACTIVE_STATUS_ENUM, ROLE_ENUM } from '../users.constant';
+import mongoose from 'mongoose';
+import { STATUS_ENUM, ROLE_ENUM } from '../users.constant';
 
-export class IUser extends Document {
-  @ApiProperty()
-  _id: mongoose.Schema.Types.ObjectId;
+export interface IUser {
+  _id?: mongoose.Schema.Types.ObjectId;
 
-  @ApiProperty()
   userName: string;
 
-  @ApiProperty()
   email: string;
 
-  // @ApiProperty()
-  // password: string;
+  password: string;
 
-  @ApiProperty()
-  phone: string;
+  phone?: string;
 
-  @ApiProperty()
-  address: string;
+  address?: string;
 
-  @ApiProperty()
-  isAdmin: ROLE_ENUM;
+  role?: ROLE_ENUM;
 
-  @ApiProperty()
-  isActive: ACTIVE_STATUS_ENUM;
+  status?: STATUS_ENUM;
 
-  // @ApiProperty()
-  // createdAt: Date;
+  createdAt?: Date;
 
-  // @ApiProperty()
-  // updatedAt: Date;
+  updatedAt?: Date;
+
+  __v?: number;
+}
+
+export interface IUserUpdate {
+  userName?: string;
+
+  email?: string;
+
+  password?: string;
+
+  phone?: string;
+
+  address?: string;
+
+  role?: ROLE_ENUM;
+
+  status?: STATUS_ENUM;
 }

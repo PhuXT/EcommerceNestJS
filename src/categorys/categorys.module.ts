@@ -9,6 +9,16 @@ import { MongooseModule } from '@nestjs/mongoose';
     MongooseModule.forFeature([
       { name: Category.name, schema: CategorySchema },
     ]),
+    // MongooseModule.forFeatureAsync([
+    //   {
+    //     name: Category.name,
+    //     useFactory: () => {
+    //       const schema = CategorySchema;
+    //       schema.plugin(require('mongoose-delete'));
+    //       return schema;
+    //     },
+    //   },
+    // ]),
   ],
   providers: [CategorysService, CategoryRepository],
   controllers: [CategorysController],

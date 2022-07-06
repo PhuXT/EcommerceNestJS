@@ -17,7 +17,7 @@ export class Category {
   @Prop({ required: true, default: STATUS_ENUM.INACTIVE })
   status: STATUS_ENUM;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, unique: true, default: Date.now() })
   priority: number;
 
   createdAt: Date;
