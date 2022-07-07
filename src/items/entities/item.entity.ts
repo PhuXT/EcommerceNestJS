@@ -1,49 +1,33 @@
-import { ApiProperty } from '@nestjs/swagger';
 import mongoose, { Document } from 'mongoose';
 
-export class IItem extends Document {
-  @ApiProperty()
-  _id: mongoose.Schema.Types.ObjectId;
-
-  @ApiProperty()
+interface ICategory {
+  id: mongoose.Schema.Types.ObjectId;
   name: string;
+}
 
-  @ApiProperty()
-  barCode: string;
-
-  @ApiProperty()
-  cost: number;
-
-  @ApiProperty()
-  price: number;
-
-  @ApiProperty()
-  weight: number;
-
-  @ApiProperty()
-  imgs: string[];
-
-  @ApiProperty()
-  descriptions: string;
-
-  @ApiProperty()
-  isFashSale: boolean;
-
-  @ApiProperty()
-  categories: string[];
-
-  @ApiProperty()
+interface IFlashSale {
+  name: string;
+  startTime: Date;
+  endTime: Date;
   quantity: number;
+  discount: number;
+}
 
-  @ApiProperty()
+export interface IItem {
+  _id?: mongoose.Schema.Types.ObjectId;
+  name: string;
+  barCode: string;
+  cost: number;
+  price: number;
+  weight: number;
+  avatarImg: string;
+  detailImgs?: string[];
+  descriptions: string;
+  categories: ICategory;
+  flashSale: IFlashSale | null;
+  quantity: number;
   stocks: number;
-
-  @ApiProperty()
-  tags: string;
-
-  @ApiProperty()
-  createdAt: Date;
-
-  @ApiProperty()
-  updatedAt: Date;
+  tags: string[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }

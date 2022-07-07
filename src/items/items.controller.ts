@@ -23,22 +23,8 @@ import { Express } from 'express';
 export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
 
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './uploaded/items',
-        filename: editFileName,
-      }),
-      fileFilter: imageFileFilter,
-    }),
-  )
   @Post()
-  create(
-    @Body() createItemDto: CreateItemDto,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    console.log(file);
-
+  create(@Body() createItemDto: CreateItemDto) {
     return this.itemsService.create(createItemDto);
   }
 

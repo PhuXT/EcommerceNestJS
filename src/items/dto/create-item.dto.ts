@@ -1,5 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsNumberString, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import mongoose from 'mongoose';
+
+class category {
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  id: mongoose.Schema.Types.ObjectId;
+}
 
 export class CreateItemDto {
   @ApiProperty({ required: true, type: String })
@@ -14,42 +32,42 @@ export class CreateItemDto {
 
   @ApiProperty({ required: true, type: Number })
   @IsNotEmpty()
-  @IsNumberString()
+  @IsNumber()
   cost: number;
 
   @ApiProperty({ required: true, type: Number })
   @IsNotEmpty()
-  @IsNumberString()
+  @IsNumber()
   price: number;
 
   @ApiProperty({ required: true, type: Number })
   @IsNotEmpty()
-  @IsNumberString()
+  @IsNumber()
   weight: number;
 
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsArray()
-  imgs: string[];
+  avatarImg: string;
+
+  @ApiProperty({ required: true })
+  @IsArray()
+  detailImgs?: string[];
 
   @ApiProperty({ required: true, type: String })
   @IsNotEmpty()
   @IsString()
   descriptions: string;
 
-  //   @ApiProperty({ required: true, type: Boolean })
-  //   @IsNotEmpty()
-  //   @IsBoolean()
-  //   isFashSale: boolean;
-
   @ApiProperty({ required: true })
   @IsNotEmpty()
-  @IsArray()
-  categories: string[];
+  @Type(() => category)
+  @ValidateNested()
+  categories: category;
 
   @ApiProperty({ required: true, type: Number })
   @IsNotEmpty()
-  @IsNumberString()
+  @IsNumber()
   quantity: number;
 
   //   @ApiProperty({ required: true, type: Number })
@@ -59,6 +77,6 @@ export class CreateItemDto {
 
   @ApiProperty({ required: true, type: String })
   @IsNotEmpty()
-  @IsString()
-  tags: string;
+  @IsArray()
+  tags: string[];
 }

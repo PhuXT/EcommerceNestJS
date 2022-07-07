@@ -1,14 +1,44 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document, Model } from 'mongoose';
-import { CreateItemDto } from './dto/create-item.dto';
+import mongoose, { Document } from 'mongoose';
 
 export type ItemDocument = Item & Document;
 
-@Schema({ timestamps: true })
-export class Item {
-  _id: mongoose.Schema.Types.ObjectId | string;
+@Schema()
+class Category {
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId })
+  id: mongoose.Schema.Types.ObjectId;
 
   @Prop({ required: true })
+  name: string;
+}
+
+const categorySchema = SchemaFactory.createForClass(Category);
+
+@Schema()
+class FlashSale {
+  @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true, type: Date })
+  startTime: Date;
+
+  @Prop({ required: true, type: Date })
+  endTime: Date;
+
+  @Prop({ required: true })
+  quantity: number;
+
+  @Prop({ required: true })
+  discount: number;
+}
+
+const FlashSaleSchema = SchemaFactory.createForClass(FlashSale);
+
+@Schema({ timestamps: true })
+export class Item {
+  // _id: mongoose.Schema.Types.ObjectId;
+
+  @Prop({ required: true, unique: true })
   name: string;
 
   @Prop({ required: true, unique: true })
@@ -24,29 +54,32 @@ export class Item {
   weight: number;
 
   @Prop({ required: true })
-  imgs: string[];
+  avatarImg: string;
+
+  @Prop({ default: [] })
+  detailImgs: string[];
 
   @Prop({ required: true })
   descriptions: string;
 
-  @Prop({ default: false })
-  isFashSale: boolean;
+  @Prop({ required: true, type: [categorySchema] })
+  categories: [Category];
 
-  @Prop({ required: true })
-  categories: string[];
+  @Prop({ default: null, type: FlashSaleSchema })
+  flashSale: FlashSale;
 
   @Prop({ required: true })
   quantity: number;
 
-  @Prop({ required: true })
+  @Prop({ default: 0 })
   stocks: number;
 
-  @Prop({ required: true })
-  tags: string;
+  @Prop({ default: [] })
+  tags: string[];
 
-  createdAt: Date;
+  // createdAt: Date;
 
-  updatedAt: Date;
+  // updatedAt: Date;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

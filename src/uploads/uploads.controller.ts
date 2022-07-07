@@ -3,9 +3,13 @@ import {
   Controller,
   Post,
   UploadedFile,
+  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  FileInterceptor,
+  FileFieldsInterceptor,
+} from '@nestjs/platform-express';
 import { imageFileFilter } from 'src/users/multer/multer.config';
 import { NewFileDetailDto } from './dto/new-file-detail.dto';
 import { UploadsService } from './uploads.service';
@@ -15,11 +19,21 @@ export class UploadsController {
   constructor(readonly uploadService: UploadsService) {}
 
   @Post('/')
-  @UseInterceptors(FileInterceptor('file', { fileFilter: imageFileFilter }))
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'image', maxCount: 1 },
+        { name: 'imageDetails', maxCount: 3 },
+      ],
+      { fileFilter: imageFileFilter },
+    ),
+  )
   async upload(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: Express.Multer.File,
     @Body() fileDetail: NewFileDetailDto,
   ) {
-    return await this.uploadService.upload(file, fileDetail.bucketPath);
+    console.log(files);
+
+    // return await this.uploadService.upload(file, fileDetail.bucketPath);
   }
 }

@@ -15,7 +15,7 @@ export class Items {
   @Prop({ required: true, default: 20 })
   discount: number;
 }
-export const ItemsSchema = SchemaFactory.createForClass(Items);
+const ItemsSchema = SchemaFactory.createForClass(Items);
 
 @Schema({ timestamps: true })
 export class FlashSale {
