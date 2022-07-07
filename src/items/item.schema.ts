@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, Model } from 'mongoose';
+import { CreateItemDto } from './dto/create-item.dto';
 
 export type ItemDocument = Item & Document;
 

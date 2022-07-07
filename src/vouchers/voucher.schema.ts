@@ -30,3 +30,7 @@ export class Voucher {
 }
 
 export const VoucherSchema = SchemaFactory.createForClass(Voucher);
+
+// VoucherSchema.pre('findOneAndUpdate', () => {
+//   console.log('hihi');
+// });
