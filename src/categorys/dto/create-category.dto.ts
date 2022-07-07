@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsNumberString, IsString } from 'class-validator';
-import { STATUS_ENUM } from '../categorys.constant';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateCategoryDto {
   @ApiProperty({ type: String })
@@ -9,8 +8,7 @@ export class CreateCategoryDto {
   categoryName: string;
 
   @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   image: string;
-
-  @ApiProperty({ default: STATUS_ENUM.INACTIVE })
-  status: STATUS_ENUM;
 }

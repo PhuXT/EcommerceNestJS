@@ -11,6 +11,7 @@ import { CategorysModule } from './categorys/categorys.module';
 import { MulterModule } from '@nestjs/platform-express/multer';
 import { VouchersModule } from './vouchers/vouchers.module';
 import { ItemsModule } from './items/items.module';
+import { UploadsModule } from './uploads/uploads.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,6 +27,7 @@ import { ItemsModule } from './items/items.module';
     CategorysModule,
     VouchersModule,
     ItemsModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

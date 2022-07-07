@@ -2,7 +2,7 @@ import { BadGatewayException, Injectable } from '@nestjs/common';
 import { STATUS_ENUM } from './categorys.constant';
 import { CategoryRepository } from './categotys.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { ICategory } from './entity/category.entity';
+import { ICategory, ICategoryUpdate } from './entity/category.entity';
 
 @Injectable()
 export class CategorysService {
@@ -20,48 +20,63 @@ export class CategorysService {
     return this.categoryRepository.find({});
   }
 
-  updateStatus(categoryId, status): Promise<ICategory> {
-    return this.categoryRepository.findOneAndUpdate(categoryId, status);
+  async getCategoriesActive(): Promise<ICategory[]> {
+    const CategoriesActive = await this.categoryRepository.find({
+      status: STATUS_ENUM.ACTIVE,
+    });
+    CategoriesActive.sort((a, b) => {
+      if (a.priority < b.priority) return -1;
+      return 0;
+    });
+    return CategoriesActive;
   }
 
   getCategory(categoryName: string): Promise<ICategory> {
     return this.categoryRepository.findOne({ categoryName });
   }
 
-  async updatePriority(updateCategoryId, toCategoryBody) {
-    const updateCategory = await this.categoryRepository.findOne({
-      _id: updateCategoryId,
-    });
-    const toCategory = await this.categoryRepository.findOne({
-      _id: toCategoryBody.categoryId,
-    });
-    if (!updateCategory || !toCategoryBody) {
-      throw new BadGatewayException('Category not exist');
+  async update(categoryId: string, updateCategoryDto: ICategoryUpdate) {
+    if (updateCategoryDto.priority) {
+      const listCategoryActive = await this.categoryRepository.find({
+        status: STATUS_ENUM.ACTIVE,
+      });
+
+      updateCategoryDto.priority = this.updatePriority(
+        Number(updateCategoryDto.priority) - 1,
+        listCategoryActive,
+      );
     }
 
-    if (
-      updateCategory.status !== STATUS_ENUM.ACTIVE ||
-      toCategory.status !== STATUS_ENUM.ACTIVE
-    ) {
-      throw new BadGatewayException('You need active cetegory');
+    return this.categoryRepository.findOneAndUpdate(
+      { _id: categoryId },
+      updateCategoryDto,
+    );
+  }
+
+  //Funtion update priority
+  updatePriority(priority: number, listCategoryActive): number {
+    listCategoryActive.sort((a, b) => {
+      if (a.priority < b.priority) return -1;
+      return 0;
+    });
+
+    if (priority <= 0) {
+      return Number(listCategoryActive[0].priority) - 1;
     }
-    const toCategoryPriority = toCategory.priority;
-    const updateCategoryPriority = updateCategory.priority;
 
-    this.categoryRepository.findOneAndUpdate(
-      { _id: toCategoryBody.categoryId },
-      { priority: '' },
+    if (priority >= listCategoryActive.length - 1) {
+      return (
+        Number(listCategoryActive[listCategoryActive.length - 1].priority) + 1
+      );
+    }
+
+    const prePriorityCategory = Number(
+      listCategoryActive[priority - 1].priority,
+    );
+    const nextPriorityCategory = Number(
+      listCategoryActive[priority + 1].priority,
     );
 
-    this.categoryRepository.findOneAndUpdate(
-      { _id: updateCategoryId },
-      { priority: toCategoryPriority },
-    );
-
-    this.categoryRepository.findOneAndUpdate(
-      { _id: toCategoryBody.categoryId },
-      { priority: updateCategoryPriority },
-    );
-    return true;
+    return (prePriorityCategory + nextPriorityCategory) / 2;
   }
 }

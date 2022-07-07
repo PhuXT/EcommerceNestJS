@@ -24,3 +24,19 @@ export class ICategory extends Document {
   //   @ApiProperty()
   //   updatedAt: Date;
 }
+
+export interface ICategoryUpdate {
+  status?: STATUS_ENUM;
+
+  priority?: number;
+
+  categoryName?: string;
+
+  image?: string;
+
+  //
+  //   createdAt: Date;
+
+  //
+  //   updatedAt: Date;
+}
