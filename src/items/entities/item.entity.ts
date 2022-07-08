@@ -23,11 +23,40 @@ export interface IItem {
   avatarImg: string;
   detailImgs?: string[];
   descriptions: string;
-  categories: ICategory;
+  category: ICategory;
   flashSale: IFlashSale | null;
   quantity: number;
   stocks: number;
   tags: string[];
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export interface ICreateItem {
+  name: string;
+  barCode: string;
+  cost: number;
+  price: number;
+  weight: number;
+  avatarImg: string;
+  detailImgs?: string[];
+  descriptions: string;
+  category: ICategory;
+  quantity: number;
+  tags?: string[];
+}
+
+export interface IUpdateItem {
+  name?: string;
+  barCode?: string;
+  cost?: number;
+  price?: number;
+  weight?: number;
+  avatarImg?: string;
+  detailImgs?: string[];
+  descriptions?: string;
+  category?: ICategory;
+  flashSale?: IFlashSale;
+  quantity?: number;
+  tags?: string[];
 }

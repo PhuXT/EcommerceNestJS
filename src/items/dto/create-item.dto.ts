@@ -47,7 +47,7 @@ export class CreateItemDto {
 
   @ApiProperty({ required: true })
   @IsNotEmpty()
-  @IsArray()
+  @IsString()
   avatarImg: string;
 
   @ApiProperty({ required: true })
@@ -63,7 +63,7 @@ export class CreateItemDto {
   @IsNotEmpty()
   @Type(() => category)
   @ValidateNested()
-  categories: category;
+  category: category;
 
   @ApiProperty({ required: true, type: Number })
   @IsNotEmpty()
@@ -78,5 +78,5 @@ export class CreateItemDto {
   @ApiProperty({ required: true, type: String })
   @IsNotEmpty()
   @IsArray()
-  tags: string[];
+  tags?: string[];
 }

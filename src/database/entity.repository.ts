@@ -1,4 +1,5 @@
 import { Document, FilterQuery, Model, UpdateQuery } from 'mongoose';
+import { SORT_ENUM } from './database.contant';
 
 export abstract class EntityRepository<T extends Document> {
   constructor(protected readonly entityModel: Model<T>) {}
@@ -16,6 +17,25 @@ export abstract class EntityRepository<T extends Document> {
 
   async find(entityFilterQuery: FilterQuery<T>): Promise<T[] | null> {
     return this.entityModel.find(entityFilterQuery);
+  }
+
+  async find2(
+    entityFilterQuery: FilterQuery<T>,
+    skip = 0,
+    limit = 0,
+    sortBy?: string,
+    options: SORT_ENUM = SORT_ENUM.ASC,
+  ): Promise<T[] | null> {
+    const sortObj = {};
+    if (options === SORT_ENUM.DEST) {
+      sortObj[sortBy] = -1;
+    }
+    sortObj[sortBy] = 1;
+    return this.entityModel
+      .find(entityFilterQuery)
+      .skip(skip)
+      .limit(limit)
+      .sort(sortObj);
   }
 
   async create(createEntityData: unknown): Promise<T> {

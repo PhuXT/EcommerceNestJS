@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BUCKETPATH_ENUM } from './uploads.contant';
 import { S3 } from 'aws-sdk';
+import { arrayBuffer } from 'stream/consumers';
 
 @Injectable()
 export class UploadsService {
@@ -13,11 +14,42 @@ export class UploadsService {
     AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
   };
 
-  async upload(file: Express.Multer.File, bucketPath: BUCKETPATH_ENUM) {
-    let urlKey = `${bucketPath}/${Date.now()}-${file.originalname}`;
-    if (bucketPath === BUCKETPATH_ENUM['CATEGORY-IMAGE'])
-      urlKey = `${bucketPath}/banner/${Date.now()}-${file.originalname}`;
-    return await this.uploadS3(file.buffer, urlKey);
+  async upload(files: Express.Multer.File, bucketPath: BUCKETPATH_ENUM) {
+    const image = files['image'][0];
+    const imageDetails = files['imageDetails'];
+    const linkFromW3 = {};
+    let urlKey = '';
+
+    if (image) {
+      if (bucketPath === BUCKETPATH_ENUM['ITEM-IMAGE']) {
+        urlKey = `${bucketPath}/avatar/${Date.now()}-${image.originalname}`;
+      }
+
+      if (bucketPath === BUCKETPATH_ENUM['CATEGORY-IMAGE']) {
+        urlKey = `${bucketPath}/banner/${Date.now()}-${image.originalname}`;
+      }
+      const imageUpload = await this.uploadS3(image.buffer, urlKey);
+      linkFromW3['image'] = imageUpload;
+    }
+
+    if (imageDetails) {
+      const linkImageDetails = [];
+      if (bucketPath === BUCKETPATH_ENUM['ITEM-IMAGE']) {
+        console.log(imageDetails.length);
+
+        for (let i = 0; i < imageDetails.length; i++) {
+          urlKey = `${bucketPath}/detail/${Date.now()}-${
+            imageDetails[i].originalname
+          }`;
+
+          linkImageDetails.push(
+            await this.uploadS3(imageDetails[i].buffer, urlKey),
+          );
+        }
+      }
+      linkFromW3['linkImageDetails'] = linkImageDetails;
+    }
+    return linkFromW3;
   }
 
   async uploadS3(file, name) {

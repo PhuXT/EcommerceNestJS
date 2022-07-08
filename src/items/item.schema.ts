@@ -1,5 +1,7 @@
+import { BadGatewayException } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+import { CreateItemDto } from './dto/create-item.dto';
 
 export type ItemDocument = Item & Document;
 
@@ -36,8 +38,6 @@ const FlashSaleSchema = SchemaFactory.createForClass(FlashSale);
 
 @Schema({ timestamps: true })
 export class Item {
-  // _id: mongoose.Schema.Types.ObjectId;
-
   @Prop({ required: true, unique: true })
   name: string;
 
@@ -63,7 +63,7 @@ export class Item {
   descriptions: string;
 
   @Prop({ required: true, type: [categorySchema] })
-  categories: [Category];
+  category: Category;
 
   @Prop({ default: null, type: FlashSaleSchema })
   flashSale: FlashSale;
@@ -76,10 +76,21 @@ export class Item {
 
   @Prop({ default: [] })
   tags: string[];
-
-  // createdAt: Date;
-
-  // updatedAt: Date;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);
+
+export interface IItemModel extends Document, CreateItemDto {}
+
+ItemSchema.pre<IItemModel>('save', async function () {
+  const category = await this.db
+    .collection('categories')
+    .findOne({ _id: this.category[0].id });
+  console.log('>>>>>>>>>>>>>>>>>');
+
+  console.log(category);
+
+  if (!category) {
+    throw new BadGatewayException('Category doesnt exist');
+  }
+});

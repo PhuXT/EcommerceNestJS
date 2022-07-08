@@ -32,8 +32,6 @@ export class UploadsController {
     @UploadedFiles() files: Express.Multer.File,
     @Body() fileDetail: NewFileDetailDto,
   ) {
-    console.log(files);
-
-    // return await this.uploadService.upload(file, fileDetail.bucketPath);
+    return await this.uploadService.upload(files, fileDetail.bucketPath);
   }
 }
