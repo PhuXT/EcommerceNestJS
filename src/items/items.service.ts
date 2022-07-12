@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { SORT_ENUM } from 'src/database/database.contant';
-import { CreateItemDto } from './dto/create-item.dto';
-import { UpdateItemDto } from './dto/update-item.dto';
 import { ICreateItem, IItem, IUpdateItem } from './entities/item.entity';
 import { ItemsRepository } from './items.repository';
 
@@ -9,8 +7,13 @@ import { ItemsRepository } from './items.repository';
 export class ItemsService {
   constructor(private itemRepository: ItemsRepository) {}
 
-  create(createItemDto: ICreateItem): Promise<IItem> {
-    return this.itemRepository.create(createItemDto);
+  async create(createItemDto: ICreateItem): Promise<IItem> {
+    const itemDto = await this.itemRepository.create(createItemDto);
+    const newItem = await this.itemRepository.findOneAndUpdate(
+      { _id: itemDto._id },
+      { stocks: itemDto.quantity },
+    );
+    return newItem;
   }
 
   findAll(
@@ -20,11 +23,17 @@ export class ItemsService {
     options?: SORT_ENUM,
   ): Promise<IItem[]> {
     const skip = limit * (page - 1);
-    return this.itemRepository.find2({}, skip, limit, sortBy, options);
+    return this.itemRepository.findWithOptions(
+      {},
+      skip,
+      limit,
+      sortBy,
+      options,
+    );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} item`;
+  findOne(id: string): Promise<IItem> {
+    return this.itemRepository.findOne({ _id: id });
   }
 
   update(id: string, updateItemDto: IUpdateItem) {

@@ -29,7 +29,7 @@ export class CreateFlashsaleDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsDateString()
-  @IsStartTime({ message: 'start time must be future' })
+  @IsStartTime({ message: 'start time must be future and hours like 10:00' })
   startTime: Date;
 
   @ApiProperty()
@@ -54,7 +54,7 @@ export class flashSaleItemInfor {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  quantity: number;
+  flashSaleQuantity: number;
 
   @ApiProperty()
   @IsNotEmpty()

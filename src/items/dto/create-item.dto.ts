@@ -70,11 +70,6 @@ export class CreateItemDto {
   @IsNumber()
   quantity: number;
 
-  //   @ApiProperty({ required: true, type: Number })
-  //   @IsNotEmpty()
-  //   @IsNumberString()
-  //   stocks: number;
-
   @ApiProperty({ required: true, type: String })
   @IsNotEmpty()
   @IsArray()

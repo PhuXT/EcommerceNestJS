@@ -1,26 +1,26 @@
+import { BadRequestException } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+import { CreateFlashsaleDto } from './dto/create-flashsale.dto';
 import { STATUS_FLASHSALE_ENUM } from './flashsale.constain';
 
 export type FlashSaleDocument = FlashSale & Document;
 
 @Schema({ _id: false })
-export class Items {
+export class Item {
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId })
-  itemId: mongoose.Schema.Types.ObjectId | string;
+  itemId: mongoose.Schema.Types.ObjectId;
 
   @Prop({ required: true })
-  quantity: number;
+  flashSaleQuantity: number;
 
   @Prop({ required: true, default: 20 })
   discount: number;
 }
-const ItemsSchema = SchemaFactory.createForClass(Items);
+const ItemsSchema = SchemaFactory.createForClass(Item);
 
 @Schema({ timestamps: true })
 export class FlashSale {
-  // _id: mongoose.Schema.Types.ObjectId;
-
   @Prop()
   name: string;
 
@@ -28,23 +28,49 @@ export class FlashSale {
   status: STATUS_FLASHSALE_ENUM;
 
   @Prop({ type: [ItemsSchema] })
-  items: [Items];
+  items: [Item];
 
   @Prop()
   startTime: Date;
 
   @Prop()
   endTime: Date;
-
-  // createdAt: Date;
-
-  // updatedAt: Date;
 }
 
 export const FlashSaleSchema = SchemaFactory.createForClass(FlashSale);
 
-// ItemsSchema.pre('save', (next) => {
-//   console.log(this['subpaths']);
+export interface IFlashSaleModel extends Document, CreateFlashsaleDto {}
 
-//   console.log(1);
-// });
+FlashSaleSchema.pre<IFlashSaleModel>('save', async function () {
+  // Check time flash sale
+  const startTime = new Date(this.startTime).getTime();
+  const endTimeBiggest = await await this.db
+    .collection('flashsales')
+    .findOne({}, { sort: { $natural: -1 } });
+  const endTimeBiggestMilisecond = new Date(endTimeBiggest.endTime).getTime();
+
+  if (startTime <= endTimeBiggestMilisecond) {
+    throw new BadRequestException('There existed flash sales during this time');
+  }
+
+  // Check list items slash sale valid
+  for (let i = 0; i < this.items.length; i++) {
+    const item = await this.db
+      .collection('items')
+      .findOne({ _id: this.items[i].itemId });
+
+    if (!item) {
+      throw new BadRequestException('Item doesnt exist');
+    }
+
+    if (this.items[i].discount <= 0 || this.items[i].discount >= 100) {
+      throw new BadRequestException('Discount invalid');
+    }
+
+    if (this.items[i].flashSaleQuantity > item.stocks) {
+      throw new BadRequestException(
+        'quantity of product in stock must be less than product flash sale',
+      );
+    }
+  }
+});

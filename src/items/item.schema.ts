@@ -1,11 +1,11 @@
-import { BadGatewayException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { CreateItemDto } from './dto/create-item.dto';
 
 export type ItemDocument = Item & Document;
 
-@Schema()
+@Schema({ _id: false })
 class Category {
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId })
   id: mongoose.Schema.Types.ObjectId;
@@ -16,25 +16,25 @@ class Category {
 
 const categorySchema = SchemaFactory.createForClass(Category);
 
-@Schema()
-class FlashSale {
-  @Prop({ required: true })
-  name: string;
+// @Schema()
+// class FlashSale {
+//   @Prop({ required: true })
+//   name: string;
 
-  @Prop({ required: true, type: Date })
-  startTime: Date;
+//   @Prop({ required: true, type: Date })
+//   startTime: Date;
 
-  @Prop({ required: true, type: Date })
-  endTime: Date;
+//   @Prop({ required: true, type: Date })
+//   endTime: Date;
 
-  @Prop({ required: true })
-  quantity: number;
+//   @Prop({ required: true })
+//   quantity: number;
 
-  @Prop({ required: true })
-  discount: number;
-}
+//   @Prop({ required: true })
+//   discount: number;
+// }
 
-const FlashSaleSchema = SchemaFactory.createForClass(FlashSale);
+// const FlashSaleSchema = SchemaFactory.createForClass(FlashSale);
 
 @Schema({ timestamps: true })
 export class Item {
@@ -62,11 +62,11 @@ export class Item {
   @Prop({ required: true })
   descriptions: string;
 
-  @Prop({ required: true, type: [categorySchema] })
+  @Prop({ required: true, type: categorySchema })
   category: Category;
 
-  @Prop({ default: null, type: FlashSaleSchema })
-  flashSale: FlashSale;
+  // @Prop({ default: null, type: FlashSaleSchema })
+  // flashSale: FlashSale;
 
   @Prop({ required: true })
   quantity: number;
@@ -85,12 +85,11 @@ export interface IItemModel extends Document, CreateItemDto {}
 ItemSchema.pre<IItemModel>('save', async function () {
   const category = await this.db
     .collection('categories')
-    .findOne({ _id: this.category[0].id });
-  console.log('>>>>>>>>>>>>>>>>>');
+    .findOne({ _id: this.category.id });
 
-  console.log(category);
+  if (!category || category.categoryName !== this.category.name) {
+    console.log('Category doesnt exist phan nay chua log ra duoc ne');
 
-  if (!category) {
-    throw new BadGatewayException('Category doesnt exist');
+    throw new BadRequestException('Category doesnt exist');
   }
 });

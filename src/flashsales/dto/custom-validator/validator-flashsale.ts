@@ -13,6 +13,8 @@ export function IsStartTime(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(value: any) {
+          // const dateMinutesSecondSplit = value.split(':');
+
           return Date.parse(value) > Date.now();
         },
       },

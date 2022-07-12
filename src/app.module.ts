@@ -13,6 +13,7 @@ import { VouchersModule } from './vouchers/vouchers.module';
 import { ItemsModule } from './items/items.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { FlashsalesModule } from './flashsales/flashsales.module';
+import { OrdersModule } from './orders/orders.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,6 +31,7 @@ import { FlashsalesModule } from './flashsales/flashsales.module';
     ItemsModule,
     UploadsModule,
     FlashsalesModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

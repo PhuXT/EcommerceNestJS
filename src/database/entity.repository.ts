@@ -19,7 +19,7 @@ export abstract class EntityRepository<T extends Document> {
     return this.entityModel.find(entityFilterQuery);
   }
 
-  async find2(
+  async findWithOptions(
     entityFilterQuery: FilterQuery<T>,
     skip = 0,
     limit = 0,

@@ -14,6 +14,6 @@ export interface IFlashSale {
 
 export interface IFlashSaleItemInfor {
   itemId: mongoose.Schema.Types.ObjectId | string;
-  quantity: number;
+  flashSaleQuantity: number;
   discount: number;
 }

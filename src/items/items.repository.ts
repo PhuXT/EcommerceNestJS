@@ -27,4 +27,10 @@ export class ItemsRepository extends EntityRepository<ItemDocument> {
     }
     return null;
   }
+
+  async findOne(id: {}): Promise<ItemDocument> {
+    const item = await super.findOne({ _id: id });
+    if (!item) throw new BadRequestException('Item doesnt exist');
+    return item;
+  }
 }

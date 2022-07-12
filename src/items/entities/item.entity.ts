@@ -1,17 +1,17 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose from 'mongoose';
 
 interface ICategory {
   id: mongoose.Schema.Types.ObjectId;
   name: string;
 }
 
-interface IFlashSale {
-  name: string;
-  startTime: Date;
-  endTime: Date;
-  quantity: number;
-  discount: number;
-}
+// interface IFlashSale {
+//   name: string;
+//   startTime: Date;
+//   endTime: Date;
+//   quantity: number;
+//   discount: number;
+// }
 
 export interface IItem {
   _id?: mongoose.Schema.Types.ObjectId;
@@ -24,7 +24,7 @@ export interface IItem {
   detailImgs?: string[];
   descriptions: string;
   category: ICategory;
-  flashSale: IFlashSale | null;
+  // flashSale: IFlashSale | null;
   quantity: number;
   stocks: number;
   tags: string[];
@@ -56,7 +56,7 @@ export interface IUpdateItem {
   detailImgs?: string[];
   descriptions?: string;
   category?: ICategory;
-  flashSale?: IFlashSale;
+  // flashSale?: IFlashSale;
   quantity?: number;
   tags?: string[];
 }

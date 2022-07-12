@@ -44,8 +44,8 @@ export class ItemsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.itemsService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<IItem> | null {
+    return this.itemsService.findOne(id);
   }
 
   @Patch(':id')
