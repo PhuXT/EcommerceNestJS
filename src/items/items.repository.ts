@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { log } from 'console';
 import { Model } from 'mongoose';
 import { EntityRepository } from '../database/entity.repository';
 import { ICreateItem } from './entities/item.entity';
@@ -29,8 +30,16 @@ export class ItemsRepository extends EntityRepository<ItemDocument> {
   }
 
   async findOne(id: {}): Promise<ItemDocument> {
-    const item = await super.findOne({ _id: id });
-    if (!item) throw new BadRequestException('Item doesnt exist');
+    let item: ItemDocument;
+    try {
+      item = await super.findOne({ _id: id });
+      if (!item) throw new BadRequestException('Item doesnt exist');
+      return item;
+    } catch (error) {
+      if (error.stringValue) {
+        throw new BadRequestException('id should be formatted as ObjId');
+      }
+    }
     return item;
   }
 }

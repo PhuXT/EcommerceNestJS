@@ -44,13 +44,17 @@ export interface IFlashSaleModel extends Document, CreateFlashsaleDto {}
 FlashSaleSchema.pre<IFlashSaleModel>('save', async function () {
   // Check time flash sale
   const startTime = new Date(this.startTime).getTime();
-  const endTimeBiggest = await await this.db
+  const endTimeBiggest = await this.db
     .collection('flashsales')
     .findOne({}, { sort: { $natural: -1 } });
-  const endTimeBiggestMilisecond = new Date(endTimeBiggest.endTime).getTime();
+  if (endTimeBiggest) {
+    const endTimeBiggestMilisecond = new Date(endTimeBiggest.endTime).getTime();
 
-  if (startTime <= endTimeBiggestMilisecond) {
-    throw new BadRequestException('There existed flash sales during this time');
+    if (startTime <= endTimeBiggestMilisecond) {
+      throw new BadRequestException(
+        'There existed flash sales during this time',
+      );
+    }
   }
 
   // Check list items slash sale valid

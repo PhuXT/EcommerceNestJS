@@ -5,14 +5,6 @@ interface ICategory {
   name: string;
 }
 
-// interface IFlashSale {
-//   name: string;
-//   startTime: Date;
-//   endTime: Date;
-//   quantity: number;
-//   discount: number;
-// }
-
 export interface IItem {
   _id?: mongoose.Schema.Types.ObjectId;
   name: string;
@@ -24,12 +16,16 @@ export interface IItem {
   detailImgs?: string[];
   descriptions: string;
   category: ICategory;
-  // flashSale: IFlashSale | null;
   quantity: number;
   stocks: number;
   tags: string[];
   createdAt?: Date;
   updatedAt?: Date;
+  flashSalePrice?: number;
+  flashSaleName?: string;
+  flashSaleDiscount?: number;
+  sold?: number;
+  __v?: string;
 }
 
 export interface ICreateItem {
@@ -56,7 +52,6 @@ export interface IUpdateItem {
   detailImgs?: string[];
   descriptions?: string;
   category?: ICategory;
-  // flashSale?: IFlashSale;
   quantity?: number;
   tags?: string[];
 }

@@ -13,5 +13,6 @@ import { CategorysModule } from 'src/categorys/categorys.module';
   ],
   controllers: [VouchersController],
   providers: [VouchersService, VoucherRepository],
+  exports: [VouchersService, VoucherRepository],
 })
 export class VouchersModule {}

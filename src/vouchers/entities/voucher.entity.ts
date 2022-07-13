@@ -14,6 +14,8 @@ export interface IVoucher {
 
   categories: string[];
 
+  code: string;
+
   nameVoucher: string;
 
   description: string;

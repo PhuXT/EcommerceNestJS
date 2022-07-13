@@ -57,7 +57,7 @@ export class ItemsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.itemsService.remove(+id);
+  remove(@Param('id') id: string): Promise<boolean> {
+    return this.itemsService.remove(id);
   }
 }

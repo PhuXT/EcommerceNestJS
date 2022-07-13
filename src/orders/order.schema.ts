@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { ItemSchema } from 'src/items/item.schema';
 
 export type OrderDocument = Order & Document;
 
@@ -8,25 +7,37 @@ export type OrderDocument = Order & Document;
 @Schema({ _id: false })
 class Item {
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId })
-  itemId: mongoose.Schema.Types.ObjectId;
+  _id: mongoose.Schema.Types.ObjectId;
 
   @Prop({ required: true })
-  itemName: string;
+  name: string;
 
   @Prop({ required: true })
-  amount: number;
+  barCode: string;
 
   @Prop({ required: true })
-  itemPrice: number;
-
-  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId })
-  flashSaleId: mongoose.Schema.Types.ObjectId;
+  amountOrder: number;
 
   @Prop({ required: true })
+  price: number;
+
+  @Prop({ required: true, default: null })
   flashSaleName: string;
 
+  @Prop({ required: true, default: null })
+  flashSaleDiscount: number;
+
+  @Prop({ required: true, default: null })
+  voucherDiscount: number;
+
+  @Prop({ required: true, default: null })
+  codeVoucher: string;
+
   @Prop({ required: true })
-  flashDiscount: number;
+  totalPrice: number;
+
+  @Prop({ required: true })
+  originPrice: number;
 }
 const itemSchema = SchemaFactory.createForClass(Item);
 
@@ -46,7 +57,7 @@ class User {
   @Prop({ required: true })
   address: string;
 }
-const UserSchema = SchemaFactory.createForClass(User);
+const userSchema = SchemaFactory.createForClass(User);
 
 // Voucher Schema
 @Schema({ _id: false })
@@ -63,7 +74,7 @@ class Voucher {
   @Prop({ required: true })
   applyCategories: string[];
 }
-const VoucherSchema = SchemaFactory.createForClass(Voucher);
+const voucherSchema = SchemaFactory.createForClass(Voucher);
 
 // Main Schema ( ORDER SCHEMA)
 @Schema({ timestamps: true })
@@ -74,14 +85,14 @@ export class Order {
   @Prop({ required: true })
   originPrice: number;
 
-  @Prop({ required: true, type: ItemSchema })
-  items: Item;
+  @Prop({ required: true, type: [itemSchema] })
+  items: Item[];
 
-  @Prop({ required: true, type: UserSchema })
+  @Prop({ required: true, type: userSchema })
   user: User;
 
-  @Prop({ required: true, type: VoucherSchema })
-  voucher: Voucher;
+  // @Prop({ required: true, type: voucherSchema })
+  // voucher: Voucher;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

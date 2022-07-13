@@ -5,7 +5,7 @@ export type VoucherDocument = Voucher & Document;
 
 @Schema({ timestamps: true })
 export class Voucher {
-  _id: mongoose.Schema.Types.ObjectId | string;
+  _id: mongoose.Schema.Types.ObjectId;
 
   @Prop({ required: true })
   startTime: Date;
@@ -24,6 +24,9 @@ export class Voucher {
 
   @Prop({ required: true })
   nameVoucher: string;
+
+  @Prop({ required: true, unique: true })
+  code: string;
 
   @Prop()
   description: string;

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { FilterQuery } from 'mongoose';
 import { CategorysService } from 'src/categorys/categorys.service';
-import { CreateVoucherDto } from './dto/create-voucher.dto';
 import { UpdateVoucherDto } from './dto/update-voucher.dto';
 import { IVoucher } from './entities/voucher.entity';
+import { VoucherDocument } from './voucher.schema';
 import { VoucherRepository } from './vouchers.repository';
 
 @Injectable()
@@ -13,14 +14,17 @@ export class VouchersService {
   ) {}
 
   async create(createVoucherDto: IVoucher): Promise<IVoucher> {
-    // createVoucherDto.categories.forEach(async (categoryName) => {
-    //   const category = await this.categoryService.getCategory(categoryName);
-    //   console.log(category);
+    for (let i = 0; i < createVoucherDto.categories.length; i++) {
+      const category = await this.categoryService.getCategory(
+        createVoucherDto.categories[i],
+      );
 
-    //   if (!category) {
-    //     throw new BadRequestException(`${categoryName} is not exist`);
-    //   }CreateVoucherDto
-    // });
+      if (!category) {
+        throw new BadRequestException(
+          `${createVoucherDto.categories[i]} is not exist`,
+        );
+      }
+    }
 
     return this.voucherRepository.create(createVoucherDto);
   }
@@ -29,10 +33,21 @@ export class VouchersService {
     return this.voucherRepository.find({});
   }
 
+  // find(filterQuery: FilterQuery<VoucherDocument>): Promise<IVoucher> {
+  //   return this.voucherRepository.findOne(filterQuery);
+  // }
+
   findOne(id: string): Promise<IVoucher> {
     return this.voucherRepository.findOne({ _id: id });
   }
-
+  findVoucherNow(voucherCode): Promise<IVoucher> {
+    const dateNow = new Date().toISOString();
+    return this.voucherRepository.findOne({
+      startTime: { $lt: dateNow },
+      endTime: { $gt: dateNow },
+      code: voucherCode,
+    });
+  }
   update(id: string, updateVoucherDto: UpdateVoucherDto) {
     return this.voucherRepository.findOneAndUpdate(
       {

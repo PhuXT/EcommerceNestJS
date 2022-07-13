@@ -65,14 +65,14 @@ export class Item {
   @Prop({ required: true, type: categorySchema })
   category: Category;
 
-  // @Prop({ default: null, type: FlashSaleSchema })
-  // flashSale: FlashSale;
-
   @Prop({ required: true })
   quantity: number;
 
   @Prop({ default: 0 })
   stocks: number;
+
+  @Prop({ default: 0 })
+  sold: number;
 
   @Prop({ default: [] })
   tags: string[];
@@ -89,7 +89,6 @@ ItemSchema.pre<IItemModel>('save', async function () {
 
   if (!category || category.categoryName !== this.category.name) {
     console.log('Category doesnt exist phan nay chua log ra duoc ne');
-
     throw new BadRequestException('Category doesnt exist');
   }
 });

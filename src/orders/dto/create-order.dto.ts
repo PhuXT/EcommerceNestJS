@@ -1,13 +1,15 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import mongoose from 'mongoose';
 
 class User {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  userName: string;
-
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -17,28 +19,13 @@ class User {
   @IsNotEmpty()
   @IsString()
   address: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  userId: mongoose.Schema.Types.ObjectId;
 }
 
 class Item {
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  itemName: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
   @IsNumber()
   amount: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsNumber()
-  itemPrice: number;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -48,10 +35,19 @@ class Item {
 
 export class CreateOrderDto {
   @ApiProperty({ type: [Item] })
+  @ValidateNested({ each: true })
+  @Type(() => Item)
   @IsNotEmpty()
   items: Item[];
 
+  @ValidateNested({ each: true })
+  @Type(() => User)
   @ApiProperty({ type: User })
   @IsNotEmpty()
   user: User;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  voucherCode?: string;
 }

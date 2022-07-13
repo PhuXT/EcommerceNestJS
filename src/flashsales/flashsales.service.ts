@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { FilterQuery } from 'mongoose';
 import { UpdateFlashsaleDto } from './dto/update-flashsale.dto';
 import { IFlashSale } from './entities/flashsale.entity';
+import { STATUS_FLASHSALE_ENUM } from './flashsale.constain';
+import { FlashSaleDocument } from './flashsale.schema';
 import { FlashSaleRepository } from './flashsales.repository';
 
 @Injectable()
@@ -13,6 +16,19 @@ export class FlashsalesService {
 
   findAll(): Promise<IFlashSale[]> {
     return this.flashsaleRepository.find({});
+  }
+
+  find(filterQuery: FilterQuery<FlashSaleDocument>): Promise<IFlashSale[]> {
+    return this.flashsaleRepository.find(filterQuery);
+  }
+
+  findFlashSaleNow(): Promise<IFlashSale> {
+    const dateNow = new Date().toISOString();
+    return this.flashsaleRepository.findOne({
+      startTime: { $lt: dateNow },
+      endTime: { $gt: dateNow },
+      status: STATUS_FLASHSALE_ENUM.ACTIVE,
+    });
   }
 
   findOne(id: number) {

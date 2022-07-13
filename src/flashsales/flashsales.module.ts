@@ -13,5 +13,6 @@ import { FlashSaleRepository } from './flashsales.repository';
   ],
   controllers: [FlashsalesController],
   providers: [FlashsalesService, FlashSaleRepository],
+  exports: [FlashsalesService, FlashSaleRepository],
 })
 export class FlashsalesModule {}
