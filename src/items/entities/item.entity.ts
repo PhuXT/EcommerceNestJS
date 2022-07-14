@@ -24,6 +24,8 @@ export interface IItem {
   flashSalePrice?: number;
   flashSaleName?: string;
   flashSaleDiscount?: number;
+  flashSaleQuantity?: number;
+  flashSaleId?: mongoose.Schema.Types.ObjectId;
   sold?: number;
   __v?: string;
 }
@@ -54,4 +56,6 @@ export interface IUpdateItem {
   category?: ICategory;
   quantity?: number;
   tags?: string[];
+  stocks?: number;
+  sold?: number;
 }

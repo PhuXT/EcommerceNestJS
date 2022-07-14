@@ -1,9 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FilterQuery } from 'mongoose';
 import { CategorysService } from 'src/categorys/categorys.service';
 import { UpdateVoucherDto } from './dto/update-voucher.dto';
 import { IVoucher } from './entities/voucher.entity';
-import { VoucherDocument } from './voucher.schema';
 import { VoucherRepository } from './vouchers.repository';
 
 @Injectable()
@@ -32,10 +30,6 @@ export class VouchersService {
   findAll(): Promise<IVoucher[]> {
     return this.voucherRepository.find({});
   }
-
-  // find(filterQuery: FilterQuery<VoucherDocument>): Promise<IVoucher> {
-  //   return this.voucherRepository.findOne(filterQuery);
-  // }
 
   findOne(id: string): Promise<IVoucher> {
     return this.voucherRepository.findOne({ _id: id });

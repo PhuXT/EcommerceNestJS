@@ -67,13 +67,9 @@ FlashSaleSchema.pre<IFlashSaleModel>('save', async function () {
       throw new BadRequestException('Item doesnt exist');
     }
 
-    if (this.items[i].discount <= 0 || this.items[i].discount >= 100) {
-      throw new BadRequestException('Discount invalid');
-    }
-
     if (this.items[i].flashSaleQuantity > item.stocks) {
       throw new BadRequestException(
-        'quantity of product in stock must be less than product flash sale',
+        `quantity of ${this.items[i].itemId} in stock must be less than product flash sale`,
       );
     }
   }

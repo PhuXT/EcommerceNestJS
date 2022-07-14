@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+import { ORDER_STATUS_ENUM } from './orders.constain';
 
 export type OrderDocument = Order & Document;
 
@@ -21,17 +22,17 @@ class Item {
   @Prop({ required: true })
   price: number;
 
-  @Prop({ required: true, default: null })
-  flashSaleName: string;
+  @Prop({ required: false })
+  flashSaleName?: string;
 
-  @Prop({ required: true, default: null })
-  flashSaleDiscount: number;
+  @Prop({ required: false })
+  flashSaleDiscount?: number;
 
-  @Prop({ required: true, default: null })
-  voucherDiscount: number;
+  @Prop({ required: false })
+  voucherDiscount?: number;
 
-  @Prop({ required: true, default: null })
-  codeVoucher: string;
+  @Prop({ required: false })
+  codeVoucher?: string;
 
   @Prop({ required: true })
   totalPrice: number;
@@ -91,8 +92,8 @@ export class Order {
   @Prop({ required: true, type: userSchema })
   user: User;
 
-  // @Prop({ required: true, type: voucherSchema })
-  // voucher: Voucher;
+  @Prop({ required: true, default: ORDER_STATUS_ENUM.CONFIRM })
+  status: ORDER_STATUS_ENUM;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

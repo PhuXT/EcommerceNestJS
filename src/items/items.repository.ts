@@ -39,7 +39,12 @@ export class ItemsRepository extends EntityRepository<ItemDocument> {
       if (error.stringValue) {
         throw new BadRequestException('id should be formatted as ObjId');
       }
+
+      if (error.response) {
+        if (error.response.statusCode === 400) {
+          throw new BadRequestException(error.response.message);
+        }
+      }
     }
-    return item;
   }
 }

@@ -39,15 +39,15 @@ export class ItemsService {
     const item = Promise.all([
       this.itemRepository.findOne({ _id: id }),
       this.flashsalesService.findFlashSaleNow(),
-    ])
-      .then((value) => {
-        const [item, flashSaleNow] = value;
-        return this.getItemFlashSale(item, flashSaleNow);
-      })
-      .catch((err) => {
-        return err;
-      });
+    ]).then((value) => {
+      const [item, flashSaleNow] = value;
+      return this.getItemFlashSale(item, flashSaleNow);
+    });
     return item;
+  }
+
+  async findOneOrigin(id: string): Promise<IItem> {
+    return this.itemRepository.findOne({ _id: id });
   }
 
   update(id: string, updateItemDto: IUpdateItem) {
@@ -60,7 +60,7 @@ export class ItemsService {
     return this.itemRepository.deleteMany({ _id: id });
   }
 
-  getItemFlashSale(item: IItem, flashSaleNow) {
+  getItemFlashSale(item: IItem, flashSaleNow): IItem {
     if (flashSaleNow && item) {
       const itemWithFlashSale = { ...item['_doc'] };
       flashSaleNow.items.forEach((itemFlashSale) => {
@@ -68,7 +68,10 @@ export class ItemsService {
           itemWithFlashSale['flashSalePrice'] =
             item.price - (item.price * itemFlashSale.discount) / 100;
           itemWithFlashSale['flashSaleName'] = flashSaleNow.name;
+          itemWithFlashSale['flashSaleId'] = flashSaleNow._id;
           itemWithFlashSale['flashSaleDiscount'] = itemFlashSale.discount;
+          itemWithFlashSale['flashSaleQuantity'] =
+            itemFlashSale.flashSaleQuantity;
         }
       });
       return itemWithFlashSale;

@@ -8,6 +8,8 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Max,
+  Min,
   ValidateNested,
 } from 'class-validator';
 import mongoose from 'mongoose';
@@ -59,5 +61,7 @@ export class flashSaleItemInfor {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
+  @Max(100)
+  @Min(1)
   discount: number;
 }
