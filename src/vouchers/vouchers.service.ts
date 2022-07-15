@@ -51,6 +51,13 @@ export class VouchersService {
     );
   }
 
+  updateQuantity(id: string, quantityUpdate: number) {
+    return this.voucherRepository.update(
+      { _id: id },
+      { $inc: { quantity: quantityUpdate } },
+    );
+  }
+
   remove(id: string): Promise<boolean> {
     return this.voucherRepository.deleteMany({ _id: id });
   }

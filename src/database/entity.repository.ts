@@ -58,4 +58,16 @@ export abstract class EntityRepository<T extends Document> {
     const deleteResult = await this.entityModel.deleteMany(entityFilterQuery);
     return deleteResult.deletedCount >= 1;
   }
+
+  // update
+  async update(
+    entityFilterQuery: FilterQuery<T>,
+    updateEntitydata: UpdateQuery<unknown>,
+  ): Promise<unknown> {
+    const updateResult = await this.entityModel.updateOne(
+      entityFilterQuery,
+      updateEntitydata,
+    );
+    return updateResult;
+  }
 }

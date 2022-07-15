@@ -40,9 +40,24 @@ export class FlashsalesService {
       { _id: id },
       updateFlashsaleDto,
     );
+  }
 
-    // remove(id: string) {
-    //   return `This action removes a #${id} flashsale`;
-    // }
+  update2(id, updateFlashsaleDto) {
+    return this.flashsaleRepository.update(id, updateFlashsaleDto);
+  }
+
+  updateQuantity(idFlashSale, itemId, quantityUpdate) {
+    return this.flashsaleRepository.update(
+      {
+        _id: idFlashSale,
+        'items.itemId': itemId,
+      },
+      {
+        $inc: {
+          // 'items.$.flashSaleQuantity': item.flashSaleQuantityUpdate,
+          'items.$.flashSaleQuantity': quantityUpdate,
+        },
+      },
+    );
   }
 }

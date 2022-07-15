@@ -1,9 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { log } from 'console';
 import { FlashsalesService } from 'src/flashsales/flashsales.service';
 import { ItemsService } from 'src/items/items.service';
 import { UsersService } from 'src/users/users.service';
-import { IVoucher } from 'src/vouchers/entities/voucher.entity';
 import { VouchersService } from 'src/vouchers/vouchers.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -54,6 +52,7 @@ export class OrdersService {
       }
 
       createItemOrder.flashSaleQuantityUpdate = flashSaleQuantityUpdate;
+      // Co the xoa
       createItemOrder.stocksUpdate = itemDtail.stocks - itemOrderDto.amount;
 
       createItemOrder.amountOrder = itemOrderDto.amount;
@@ -79,9 +78,16 @@ export class OrdersService {
             `Voucher is not applicable for ${itemOrderDto.itemId} `,
           );
         }
+        if (voucher.quantity <= 0) {
+          throw new BadRequestException(
+            'Voucher are no longer available. Please use another voucher',
+          );
+        }
         createItemOrder.voucherDiscount = voucher.discount;
 
         createItemOrder.codeVoucher = voucher.code;
+        createItemOrder.voucherQuantity = voucher.quantity;
+        createItemOrder.voucehrId = voucher._id;
 
         createItemOrder.totalPrice =
           createItemOrder.totalPrice -
@@ -92,13 +98,15 @@ export class OrdersService {
     });
     const items = await Promise.all(listItem).then((value) => value);
 
-    const originPrice = items.reduce(
-      (initialValue, item) => initialValue + item.originPrice,
-      0,
+    const listUpdate = items.reduce(
+      (initialValue, item) => {
+        const originPrice = initialValue[0] + item.originPrice;
+        const totalPrice = initialValue[1] + item.totalPrice;
+        return [originPrice, totalPrice];
+      },
+      [0, 0],
     );
-    const totalPrice = items.reduce((initialValue, item) => {
-      return initialValue + item.totalPrice;
-    }, 0);
+    const [originPrice, totalPrice] = listUpdate;
 
     const order = await this.ordersRepositoty.create({
       user,
@@ -107,17 +115,40 @@ export class OrdersService {
       totalPrice,
     });
 
-    console.log(order);
-
     // Update stocks
     if (order) {
-      items.forEach(
-        (item) =>
-          this.itemService.update(item._id.toString(), {
-            stocks: item['stocksUpdate'],
-          }),
-        // this.flashSaleService.update(items.)
-      );
+      let voucher = 0;
+      let voucherId;
+      items.forEach(async (item) => {
+        await this.itemService.update(item._id.toString(), {
+          stocks: item.stocksUpdate,
+        });
+
+        if (item.flashSaleQuantityUpdate !== null) {
+          await this.flashSaleService.updateQuantity(
+            item.flashSaleId.toString(),
+            item._id.toString(),
+            -item.amountOrder,
+          );
+        }
+
+        if (item.voucehrId) {
+          console.log('Vao day');
+
+          voucher++;
+          voucherId = item.voucehrId;
+          console.log(voucher);
+        }
+      });
+      console.log('>>>>>>>>>>>>');
+
+      console.log(voucher);
+
+      if (voucher > 0) {
+        console.log('Co voucher');
+
+        await this.voucherService.updateQuantity(voucherId, -1);
+      }
     }
     return order;
   }

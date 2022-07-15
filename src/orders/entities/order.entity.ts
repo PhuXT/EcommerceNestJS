@@ -8,8 +8,11 @@ export interface CreateItemOrder {
   price: number;
   flashSaleName?: string;
   flashSaleDiscount?: number;
+  flashSaleQuantity?: number;
   stocksUpdate?: number;
   flashSaleQuantityUpdate?: number;
+  voucherQuantity?: number;
+  stocks?: number;
   totalPrice?: number;
   amountOrder?: number;
   originPrice?: number;
