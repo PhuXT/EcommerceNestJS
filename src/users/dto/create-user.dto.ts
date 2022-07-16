@@ -8,8 +8,6 @@ import {
   Matches,
   MaxLength,
   MinLength,
-  validate,
-  Validate,
 } from 'class-validator';
 import { STATUS_ENUM } from 'src/categorys/categorys.constant';
 import { ROLE_ENUM } from '../users.constant';
@@ -35,11 +33,13 @@ export class CreateUserDto {
 
   @ApiPropertyOptional()
   @IsString()
+  @IsOptional()
   @MinLength(9)
   @MaxLength(11)
   phone?: string;
 
   @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
   address?: string;
 }

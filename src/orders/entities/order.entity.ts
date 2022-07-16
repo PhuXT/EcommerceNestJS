@@ -18,7 +18,7 @@ export interface CreateItemOrder {
   originPrice?: number;
   voucherDiscount?: number;
   codeVoucher?: string;
-  voucehrId?: mongoose.Schema.Types.ObjectId;
+  voucherId?: mongoose.Schema.Types.ObjectId;
   flashSaleId?: mongoose.Schema.Types.ObjectId;
 }
 

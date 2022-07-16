@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { EntityRepository } from '../database/entity.repository';
@@ -15,7 +15,7 @@ export class UserRepository extends EntityRepository<UserDocument> {
       const user = await super.create(createUserDto);
       return user;
     } catch (error) {
-      throw new BadRequestException('Email already exist');
+      throw new ConflictException('Email already exist');
     }
     return null;
   }

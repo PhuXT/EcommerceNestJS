@@ -7,6 +7,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { CreateItemOrder, UserOrder } from './entities/order.entity';
 import { OrdersRepository } from './order.repository';
+import { ORDER_STATUS_ENUM } from './orders.constain';
 
 @Injectable()
 export class OrdersService {
@@ -31,6 +32,7 @@ export class OrdersService {
       );
 
       // Check Stocks Item
+
       if (itemDtail.stocks < itemOrderDto.amount) {
         throw new BadRequestException(
           `${itemDtail.name} does not have enough inventory`,
@@ -87,7 +89,7 @@ export class OrdersService {
 
         createItemOrder.codeVoucher = voucher.code;
         createItemOrder.voucherQuantity = voucher.quantity;
-        createItemOrder.voucehrId = voucher._id;
+        createItemOrder.voucherId = voucher._id;
 
         createItemOrder.totalPrice =
           createItemOrder.totalPrice -
@@ -119,6 +121,7 @@ export class OrdersService {
     if (order) {
       let voucher = 0;
       let voucherId;
+
       items.forEach(async (item) => {
         await this.itemService.update(item._id.toString(), {
           stocks: item.stocksUpdate,
@@ -132,23 +135,25 @@ export class OrdersService {
           );
         }
 
-        if (item.voucehrId) {
-          console.log('Vao day');
+        if (item.voucherId) {
+          // console.log('Vao day');
 
           voucher++;
-          voucherId = item.voucehrId;
-          console.log(voucher);
+          voucherId = item.voucherId;
+          await this.voucherService.updateQuantity(voucherId, -1);
+
+          // console.log(voucher);
         }
       });
-      console.log('>>>>>>>>>>>>');
+      //   console.log('>>>>>>>>>>>>');
 
-      console.log(voucher);
+      //   console.log(voucher);
 
-      if (voucher > 0) {
-        console.log('Co voucher');
+      //   if (voucher > 0) {
+      //     console.log('Co voucher');
 
-        await this.voucherService.updateQuantity(voucherId, -1);
-      }
+      //     await this.voucherService.updateQuantity(voucherId, -1);
+      //   }
     }
     return order;
   }
@@ -161,8 +166,51 @@ export class OrdersService {
     return `This action returns a #${id} order`;
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  async update(id: string) {
+    const orders = await this.ordersRepositoty.findOne({ _id: id });
+    if (
+      orders.status === ORDER_STATUS_ENUM.CANCEL ||
+      orders.status === ORDER_STATUS_ENUM.DELIVERED
+    ) {
+      throw new BadRequestException('You dont cancel this orders');
+    }
+    const arrUpdate = [];
+
+    const updateStatusOrder = this.ordersRepositoty.findOneAndUpdate(
+      { _id: id },
+      { status: ORDER_STATUS_ENUM.CANCEL },
+    );
+    arrUpdate.push(updateStatusOrder);
+    orders.items.forEach((itemOrder: CreateItemOrder) => {
+      const updateStockItem = this.itemService.updateStocks(
+        itemOrder._id.toString(),
+        itemOrder.amountOrder,
+      );
+      arrUpdate.push(updateStockItem);
+
+      if (itemOrder.flashSaleId) {
+        const updateFlashSaleQuantity = this.flashSaleService.updateQuantity(
+          itemOrder.flashSaleId.toString(),
+          itemOrder._id.toString(),
+          itemOrder.amountOrder,
+        );
+        arrUpdate.push(updateFlashSaleQuantity);
+      }
+
+      if (itemOrder.voucherId) {
+        const updateVoucherQuantity = this.voucherService.updateQuantity(
+          itemOrder.voucherId.toString(),
+          1,
+        );
+        arrUpdate.push(updateVoucherQuantity);
+      }
+    });
+
+    Promise.all(arrUpdate).then(() => {
+      console.log('Update thanh cong');
+    });
+
+    return `This action updates  order`;
   }
 
   remove(id: number) {

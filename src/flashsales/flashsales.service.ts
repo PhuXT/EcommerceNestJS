@@ -42,11 +42,7 @@ export class FlashsalesService {
     );
   }
 
-  update2(id, updateFlashsaleDto) {
-    return this.flashsaleRepository.update(id, updateFlashsaleDto);
-  }
-
-  updateQuantity(idFlashSale, itemId, quantityUpdate) {
+  updateQuantity(idFlashSale: string, itemId: string, quantityUpdate: number) {
     return this.flashsaleRepository.update(
       {
         _id: idFlashSale,
@@ -54,7 +50,6 @@ export class FlashsalesService {
       },
       {
         $inc: {
-          // 'items.$.flashSaleQuantity': item.flashSaleQuantityUpdate,
           'items.$.flashSaleQuantity': quantityUpdate,
         },
       },

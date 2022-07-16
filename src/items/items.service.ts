@@ -78,4 +78,17 @@ export class ItemsService {
     }
     return item;
   }
+
+  updateStocks(itemId: string, stocksUpdate: number) {
+    return this.itemRepository.update(
+      {
+        _id: itemId,
+      },
+      {
+        $inc: {
+          stocks: stocksUpdate,
+        },
+      },
+    );
+  }
 }

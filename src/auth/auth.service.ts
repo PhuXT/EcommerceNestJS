@@ -1,12 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto, EmailDto } from 'src/users/dto/create-user.dto';
-import { UsersService } from 'src/users/users.service';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { EmailDto } from '../users/dto/create-user.dto';
+import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/users/schemas/users.schema';
 import { JwtService } from '@nestjs/jwt';
-import { IUser } from 'src/users/entities/user.entity';
-import { EmailsService } from 'src/emails/emails.service';
-import { STATUS_ENUM } from 'src/users/users.constant';
+import { IUser } from '../users/entities/user.entity';
+import { EmailsService } from '../emails/emails.service';
+import { STATUS_ENUM } from '../users/users.constant';
 
 @Injectable()
 export class AuthService {
@@ -25,9 +28,10 @@ export class AuthService {
     }
     return null;
   }
+
   async login(user: IUser) {
     if (user.status === STATUS_ENUM.INACTIVE) {
-      return 'You need active account';
+      throw new UnauthorizedException('You need active account');
     }
     const payload = {
       userName: user.userName,
@@ -50,10 +54,10 @@ export class AuthService {
     return newUser;
   }
 
-  async verify(token: string) {
+  async verify(token: string): Promise<string> {
     const isVerify = this.jwtService.verify(token);
     if (!isVerify) {
-      return 'Link has been expried';
+      throw new BadRequestException('Link has been expried');
     }
     const user = this.jwtService.decode(token);
 

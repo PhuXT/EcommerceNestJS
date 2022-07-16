@@ -1,28 +1,20 @@
-import { ApiProperty } from '@nestjs/swagger';
-import mongoose, { Document } from 'mongoose';
+import mongoose from 'mongoose';
 import { STATUS_ENUM } from '../categorys.constant';
 
-export class ICategory extends Document {
-  @ApiProperty()
-  _id: mongoose.Schema.Types.ObjectId;
+export interface ICategory {
+  _id?: mongoose.Schema.Types.ObjectId;
 
-  @ApiProperty()
   categoryName: string;
 
-  @ApiProperty()
   image: string;
 
-  @ApiProperty()
-  status: STATUS_ENUM;
+  status?: STATUS_ENUM;
 
-  @ApiProperty()
-  priority: number;
+  priority?: number;
 
-  //   @ApiProperty()
-  //   createdAt: Date;
+  createdAt?: Date;
 
-  //   @ApiProperty()
-  //   updatedAt: Date;
+  updatedAt?: Date;
 }
 
 export interface ICategoryUpdate {

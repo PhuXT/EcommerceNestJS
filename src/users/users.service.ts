@@ -26,9 +26,11 @@ export class UsersService {
       createUserDto.password,
       10,
     );
+
     const newUserObj = await this.userRepository.create(createUserDto);
     if (!newUserObj) throw new InternalServerErrorException();
     const newUser = newUserObj['_doc'];
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, createdAt, updatedAt, ...newUser2 } = newUser;
     return newUser2;
@@ -42,8 +44,17 @@ export class UsersService {
   }
 
   // FIN AND UPDATE
-  findOneAndUpdate(id, updateUserDto) {
-    return this.userRepository.findOneAndUpdate(id, updateUserDto);
+  async findOneAndUpdate(id, updateUserDto): Promise<IUser> {
+    try {
+      const userUpdate = await this.userRepository.findOneAndUpdate(
+        id,
+        updateUserDto,
+      );
+      return userUpdate;
+    } catch (error) {
+      console.log(error);
+    }
+    // return this.userRepository.findOneAndUpdate(id, updateUserDto);
   }
 
   async find(): Promise<IUser[]> {

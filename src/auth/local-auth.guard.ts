@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -13,17 +14,12 @@ export class LocalAuthGuard extends AuthGuard('local') {
     const { email, password } = request.body;
     if (err || !user) {
       if (!email) {
-        throw new HttpException(
-          { message: 'email is required' },
-          HttpStatus.OK,
-        );
+        throw new BadRequestException('Email is required');
       } else if (!password) {
-        throw new HttpException(
-          { message: 'password is required' },
-          HttpStatus.OK,
-        );
+        throw new BadRequestException('Password is required');
       } else {
-        throw err || new UnauthorizedException();
+        throw new BadRequestException('Wrong email or password');
+        // throw err || new UnauthorizedException();
       }
     }
     return user;

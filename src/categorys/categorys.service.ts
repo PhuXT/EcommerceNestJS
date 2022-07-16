@@ -1,14 +1,17 @@
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { STATUS_ENUM } from './categorys.constant';
 import { CategoryRepository } from './categotys.repository';
-import { CreateCategoryDto } from './dto/create-category.dto';
 import { ICategory, ICategoryUpdate } from './entity/category.entity';
 
 @Injectable()
 export class CategorysService {
   constructor(private categoryRepository: CategoryRepository) {}
 
-  async create(createCategoryDto: CreateCategoryDto): Promise<ICategory> {
+  async create(createCategoryDto: ICategory): Promise<ICategory> {
     return this.categoryRepository.create(createCategoryDto);
   }
 
@@ -21,25 +24,41 @@ export class CategorysService {
   }
 
   async getCategoriesActive(): Promise<ICategory[]> {
-    const CategoriesActive = await this.categoryRepository.find({
-      status: STATUS_ENUM.ACTIVE,
-    });
-    CategoriesActive.sort((a, b) => {
-      if (a.priority < b.priority) return -1;
-      return 0;
-    });
-    return CategoriesActive;
+    try {
+      const CategoriesActive = await this.categoryRepository.find({
+        status: STATUS_ENUM.ACTIVE,
+      });
+
+      CategoriesActive.sort((a, b) => {
+        if (a.priority < b.priority) return -1;
+        return 0;
+      });
+
+      return CategoriesActive;
+    } catch (error) {
+      if (error) throw new InternalServerErrorException('Server error');
+    }
   }
 
   getCategory(categoryName: string): Promise<ICategory> {
     return this.categoryRepository.findOne({ categoryName });
   }
 
-  async update(categoryId: string, updateCategoryDto: ICategoryUpdate) {
+  // UPDATE
+  async update(
+    categoryId: string,
+    updateCategoryDto: ICategoryUpdate,
+  ): Promise<ICategory> {
     if (updateCategoryDto.priority) {
       const listCategoryActive = await this.categoryRepository.find({
         status: STATUS_ENUM.ACTIVE,
       });
+
+      if (listCategoryActive.length <= 1) {
+        throw new BadRequestException(
+          'This category priority already number one',
+        );
+      }
 
       updateCategoryDto.priority = this.updatePriority(
         Number(updateCategoryDto.priority) - 1,
@@ -47,8 +66,14 @@ export class CategorysService {
       );
     }
 
-    return this.categoryRepository.findOneAndUpdate(
-      { _id: categoryId },
+    if (updateCategoryDto.categoryName) {
+      const categoryUpdate = this.categoryRepository.findOneAndUpdateOverriding(
+        categoryId,
+        updateCategoryDto,
+      );
+    }
+    return this.categoryRepository.findOneAndUpdateOverriding(
+      categoryId,
       updateCategoryDto,
     );
   }

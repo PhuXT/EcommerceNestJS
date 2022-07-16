@@ -25,8 +25,14 @@ class Item {
   @Prop({ required: false })
   flashSaleName?: string;
 
+  @Prop({ required: false, type: mongoose.Schema.Types.ObjectId })
+  flashSaleId?: mongoose.Schema.Types.ObjectId;
+
   @Prop({ required: false })
   flashSaleDiscount?: number;
+
+  @Prop({ required: false, type: mongoose.Schema.Types.ObjectId })
+  voucherId?: mongoose.Schema.Types.ObjectId;
 
   @Prop({ required: false })
   voucherDiscount?: number;

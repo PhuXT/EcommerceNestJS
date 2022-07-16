@@ -18,7 +18,7 @@ import { RolesGuard } from 'src/auth/role.guard';
 import { Roles } from 'src/auth/role.decorator';
 import { ROLE_ENUM } from 'src/users/users.constant';
 
-@ApiTags('users')
+@ApiTags('orders')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ROLE_ENUM.ADMIN, ROLE_ENUM.USER)
@@ -41,13 +41,8 @@ export class OrdersController {
     return this.ordersService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ordersService.remove(+id);
+  @Patch(':id/cancellation')
+  cancel(@Param('id') id: string) {
+    return this.ordersService.update(id);
   }
 }

@@ -33,7 +33,9 @@ export class ItemsRepository extends EntityRepository<ItemDocument> {
     let item: ItemDocument;
     try {
       item = await super.findOne({ _id: id });
-      if (!item) throw new BadRequestException('Item doesnt exist');
+      if (!item) {
+        throw new BadRequestException(`Item ${id['_id']} doesnt exist`);
+      }
       return item;
     } catch (error) {
       if (error.stringValue) {
