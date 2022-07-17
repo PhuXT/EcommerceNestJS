@@ -36,17 +36,21 @@ export class FlashsalesService {
   }
 
   async update(id: string, updateFlashsaleDto: IFlashSale) {
-    const startTimeUpdate = new Date(
-      updateFlashsaleDto.startTime,
-    ).toISOString();
-    const endTimeUpdate = new Date(updateFlashsaleDto.endTime).toISOString();
-    const flashSaleConflic = await this.flashsaleRepository.findOne({
-      startTime: { $gt: startTimeUpdate },
-      endTime: { $lt: endTimeUpdate },
-      status: STATUS_FLASHSALE_ENUM.ACTIVE,
-    });
-    if (flashSaleConflic)
-      throw new ConflictException('There existed flash sales during this time');
+    if (updateFlashsaleDto.startTime && updateFlashsaleDto.endTime) {
+      const startTimeUpdate = new Date(
+        updateFlashsaleDto.startTime,
+      ).toISOString();
+      const endTimeUpdate = new Date(updateFlashsaleDto.endTime).toISOString();
+      const flashSaleConflic = await this.flashsaleRepository.findOne({
+        startTime: { $gt: startTimeUpdate },
+        endTime: { $lt: endTimeUpdate },
+        status: STATUS_FLASHSALE_ENUM.ACTIVE,
+      });
+      if (flashSaleConflic)
+        throw new ConflictException(
+          'There existed flash sales during this time',
+        );
+    }
     return this.flashsaleRepository.findOneAndUpdate(
       { _id: id },
       updateFlashsaleDto,

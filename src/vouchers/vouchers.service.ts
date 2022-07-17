@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CategorysService } from 'src/categorys/categorys.service';
 import { UpdateVoucherDto } from './dto/update-voucher.dto';
 import { IVoucher } from './entities/voucher.entity';
@@ -24,16 +29,36 @@ export class VouchersService {
       }
     }
 
-    return this.voucherRepository.create(createVoucherDto);
+    try {
+      const voucherCreated = await this.voucherRepository.create(
+        createVoucherDto,
+      );
+      return voucherCreated;
+    } catch (error) {
+      throw new ConflictException('Code voucher already exist');
+    }
   }
 
   findAll(): Promise<IVoucher[]> {
     return this.voucherRepository.find({});
   }
 
-  findOne(id: string): Promise<IVoucher> {
-    return this.voucherRepository.findOne({ _id: id });
+  async findOne(id: string): Promise<IVoucher> {
+    try {
+      const voucher = await this.voucherRepository.findOne({ _id: id });
+      if (!voucher) throw new NotFoundException('Voucher does not exist');
+      return voucher;
+    } catch (error) {
+      if (error.kind) throw new BadRequestException('Id invalid');
+
+      if (error.response) {
+        if (error.response.statusCode == 404)
+          throw new NotFoundException('Voucher does not exist');
+      }
+    }
   }
+
+  // Find Voucher Now
   findVoucherNow(voucherCode): Promise<IVoucher> {
     const dateNow = new Date().toISOString();
     return this.voucherRepository.findOne({
@@ -42,7 +67,20 @@ export class VouchersService {
       code: voucherCode,
     });
   }
-  update(id: string, updateVoucherDto: UpdateVoucherDto) {
+  async update(id: string, updateVoucherDto: UpdateVoucherDto) {
+    console.log(updateVoucherDto);
+    try {
+      const a = await this.voucherRepository.findOneAndUpdate(
+        {
+          _id: id,
+        },
+        updateVoucherDto,
+      );
+      console.log(a);
+      console.log();
+    } catch (error) {
+      console.log(error);
+    }
     return this.voucherRepository.findOneAndUpdate(
       {
         _id: id,

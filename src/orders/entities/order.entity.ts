@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { ORDER_STATUS_ENUM } from '../orders.constain';
 
 export class Order {}
 export interface CreateItemOrder {
@@ -27,4 +28,15 @@ export interface UserOrder {
   userName?: string;
   phone: string;
   address: string;
+}
+
+export class IOrder {
+  _id?: mongoose.Schema.Types.ObjectId;
+  user?: UserOrder;
+  status?: ORDER_STATUS_ENUM;
+  createdAt?: Date;
+  updatedAt?: Date;
+  items?: CreateItemOrder[];
+  totalPrice?: number;
+  originPrice?: number;
 }

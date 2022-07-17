@@ -114,6 +114,24 @@ export class ItemsService {
     );
   }
 
+  updateStocksAndSold(
+    itemId: string,
+    stocksUpdate: number,
+    soldUpdate: number,
+  ) {
+    return this.itemRepository.update(
+      {
+        _id: itemId,
+      },
+      {
+        $inc: {
+          stocks: stocksUpdate,
+          sold: soldUpdate,
+        },
+      },
+    );
+  }
+
   updateMany(filterQuery, updateItemDto) {
     return this.itemRepository.updateMany(filterQuery, updateItemDto);
   }

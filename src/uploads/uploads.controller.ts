@@ -2,22 +2,72 @@ import {
   Body,
   Controller,
   Post,
-  UploadedFile,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
-  FileInterceptor,
-  FileFieldsInterceptor,
-} from '@nestjs/platform-express';
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Roles } from 'src/auth/role.decorator';
+import { RolesGuard } from 'src/auth/role.guard';
+import {
+  BadRequestDto,
+  InternalServerErrorExceptionDto,
+  UnauthorizedExceptionDto,
+} from 'src/swangger/swangger.dto';
 import { imageFileFilter } from 'src/users/multer/multer.config';
+import { ROLE_ENUM } from 'src/users/users.constant';
 import { NewFileDetailDto } from './dto/new-file-detail.dto';
+import { UploadSwanggerDto } from './dto/upload-swangger.dto';
 import { UploadsService } from './uploads.service';
 
+@ApiTags('uploads')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(ROLE_ENUM.ADMIN)
+@ApiInternalServerErrorResponse({
+  type: InternalServerErrorExceptionDto,
+  description: 'Server error',
+})
+@ApiUnauthorizedResponse({
+  type: UnauthorizedExceptionDto,
+  description: 'login with non-admin rights',
+})
+@ApiOkResponse({ type: UploadSwanggerDto })
+@ApiBadRequestResponse({
+  type: BadRequestDto,
+  description: 'bucketPath not empty',
+})
 @Controller('uploads')
 export class UploadsController {
   constructor(readonly uploadService: UploadsService) {}
-
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        bucketPath: { type: 'string' },
+        image: {
+          type: 'file',
+          format: 'binary',
+        },
+        imageDetails: {
+          type: 'file',
+          format: 'binary',
+        },
+      },
+    },
+  })
   @Post('/')
   @UseInterceptors(
     FileFieldsInterceptor(

@@ -4,8 +4,7 @@ import { ItemsService } from 'src/items/items.service';
 import { UsersService } from 'src/users/users.service';
 import { VouchersService } from 'src/vouchers/vouchers.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
-import { CreateItemOrder, UserOrder } from './entities/order.entity';
+import { CreateItemOrder, IOrder, UserOrder } from './entities/order.entity';
 import { OrdersRepository } from './order.repository';
 import { ORDER_STATUS_ENUM } from './orders.constain';
 
@@ -19,7 +18,7 @@ export class OrdersService {
     private readonly itemService: ItemsService,
   ) {}
 
-  async create(userInfor, createOrderDto: CreateOrderDto) {
+  async create(userInfor, createOrderDto: CreateOrderDto): Promise<IOrder> {
     // user Order
     const user: UserOrder = createOrderDto.user;
     user.userId = userInfor.id;
@@ -32,46 +31,48 @@ export class OrdersService {
       );
 
       // Check Stocks Item
-
       if (itemDtail.stocks < itemOrderDto.amount) {
         throw new BadRequestException(
           `${itemDtail.name} does not have enough inventory`,
         );
       }
 
-      let createItemOrder: CreateItemOrder = itemDtail;
+      let createItemOrder: CreateItemOrder = { ...itemDtail };
+      let flashSaleQuantityUpdate = null;
 
-      let flashSaleQuantityUpdate =
-        itemDtail.flashSaleQuantity - itemOrderDto.amount;
+      // check flashSale quantity
+      if (itemDtail.flashSaleQuantity) {
+        flashSaleQuantityUpdate =
+          itemDtail.flashSaleQuantity - itemOrderDto.amount;
 
-      if (itemDtail.flashSaleQuantity < itemOrderDto.amount) {
-        itemDtail = await this.itemService.findOneOrigin(
-          itemOrderDto.itemId.toString(),
-        );
-        createItemOrder = { ...itemDtail['_doc'] };
-
-        flashSaleQuantityUpdate = null;
+        if (itemDtail.flashSaleQuantity < itemOrderDto.amount) {
+          itemDtail = await this.itemService.findOneOrigin(
+            itemOrderDto.itemId.toString(),
+          );
+          createItemOrder = { ...itemDtail['_doc'] };
+          flashSaleQuantityUpdate = null;
+        }
       }
 
       createItemOrder.flashSaleQuantityUpdate = flashSaleQuantityUpdate;
-      // Co the xoa
       createItemOrder.stocksUpdate = itemDtail.stocks - itemOrderDto.amount;
-
       createItemOrder.amountOrder = itemOrderDto.amount;
       createItemOrder.totalPrice = itemDtail.price * itemOrderDto.amount;
+      createItemOrder.originPrice = itemDtail.price * itemOrderDto.amount;
 
+      //update createItemOrder.totalPrice if exist flashSale
       if (itemDtail.flashSalePrice) {
         createItemOrder.flashSaleId = itemDtail.flashSaleId;
         createItemOrder.totalPrice =
           itemDtail.flashSalePrice * itemOrderDto.amount;
       }
-      createItemOrder.originPrice = itemDtail.price * itemOrderDto.amount;
 
-      // Find voucher
+      // Check voucher
       if (createOrderDto.voucherCode) {
         const voucher = await this.voucherService.findVoucherNow(
           createOrderDto.voucherCode,
         );
+
         if (!voucher) {
           throw new BadRequestException('Voucher does not exist');
         }
@@ -85,12 +86,11 @@ export class OrdersService {
             'Voucher are no longer available. Please use another voucher',
           );
         }
-        createItemOrder.voucherDiscount = voucher.discount;
 
+        createItemOrder.voucherDiscount = voucher.discount;
         createItemOrder.codeVoucher = voucher.code;
         createItemOrder.voucherQuantity = voucher.quantity;
         createItemOrder.voucherId = voucher._id;
-
         createItemOrder.totalPrice =
           createItemOrder.totalPrice -
           (createItemOrder.totalPrice * voucher.discount) / 100;
@@ -98,8 +98,10 @@ export class OrdersService {
 
       return createItemOrder;
     });
+
     const items = await Promise.all(listItem).then((value) => value);
 
+    //  calculate totalPrice, originPrice order
     const listUpdate = items.reduce(
       (initialValue, item) => {
         const originPrice = initialValue[0] + item.originPrice;
@@ -110,7 +112,7 @@ export class OrdersService {
     );
     const [originPrice, totalPrice] = listUpdate;
 
-    const order = await this.ordersRepositoty.create({
+    const orderCreated = await this.ordersRepositoty.create({
       user,
       items,
       originPrice,
@@ -118,14 +120,15 @@ export class OrdersService {
     });
 
     // Update stocks
-    if (order) {
-      let voucher = 0;
+    if (orderCreated) {
       let voucherId;
 
       items.forEach(async (item) => {
-        await this.itemService.update(item._id.toString(), {
-          stocks: item.stocksUpdate,
-        });
+        await this.itemService.updateStocksAndSold(
+          item._id.toString(),
+          -item.amountOrder,
+          item.amountOrder,
+        );
 
         if (item.flashSaleQuantityUpdate !== null) {
           await this.flashSaleService.updateQuantity(
@@ -136,37 +139,27 @@ export class OrdersService {
         }
 
         if (item.voucherId) {
-          // console.log('Vao day');
-
-          voucher++;
           voucherId = item.voucherId;
           await this.voucherService.updateQuantity(voucherId, -1);
-
-          // console.log(voucher);
         }
       });
-      //   console.log('>>>>>>>>>>>>');
+    }
+    return orderCreated;
+  }
 
-      //   console.log(voucher);
+  findAll(): Promise<IOrder[]> {
+    return this.ordersRepositoty.find({});
+  }
 
-      //   if (voucher > 0) {
-      //     console.log('Co voucher');
-
-      //     await this.voucherService.updateQuantity(voucherId, -1);
-      //   }
+  async findOne(userId: string, orderId: string): Promise<IOrder> {
+    const order = await this.ordersRepositoty.findOne({ _id: orderId });
+    if (order.user.userId.toString() !== userId) {
+      throw new BadRequestException('you can only view your order');
     }
     return order;
   }
 
-  findAll() {
-    return `This action returns all orders`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
-  }
-
-  async update(id: string) {
+  async update(id: string): Promise<string> {
     const orders = await this.ordersRepositoty.findOne({ _id: id });
     if (
       orders.status === ORDER_STATUS_ENUM.CANCEL ||
@@ -210,7 +203,7 @@ export class OrdersService {
       console.log('Update thanh cong');
     });
 
-    return `This action updates  order`;
+    return `Order cancel`;
   }
 
   remove(id: number) {

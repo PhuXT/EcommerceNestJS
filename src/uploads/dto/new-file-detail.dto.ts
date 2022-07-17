@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty } from 'class-validator';
-import { BUCKETPATH_ENUM } from '../uploads.contant';
+import { BUCKETPATH_ENUM } from '../uploads.constant';
 
 export class NewFileDetailDto {
   @ApiProperty()

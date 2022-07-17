@@ -37,8 +37,6 @@ import { ROLE_ENUM } from 'src/users/users.constant';
 import { ItemSwangger } from './dto/swangger/item-swangger.dto';
 
 @ApiTags('items')
-// @ApiBearerAuth()
-// @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiInternalServerErrorResponse({
   type: InternalServerErrorExceptionDto,
   description: 'Server error',
@@ -97,12 +95,15 @@ export class ItemsController {
     return this.itemsService.findOne(id);
   }
 
-  // [GET] update
+  // [PATCH] update
   @ApiOkResponse({ type: ItemSwangger, description: 'return item updated' })
   @ApiConflictResponse({
     type: ConFlictExceptionDto,
     description: 'Name item or barcode already exist',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLE_ENUM.ADMIN)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -117,6 +118,9 @@ export class ItemsController {
     type: BadRequestDto,
     description: 'Item sold > 0 ,Id not format objId',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLE_ENUM.ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string): Promise<boolean> {
     return this.itemsService.remove(id);

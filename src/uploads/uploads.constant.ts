@@ -6,6 +6,6 @@ export const imageMimeTypes = [
 ];
 
 export enum BUCKETPATH_ENUM {
-  'ITEM-IMAGE' = 'item-images',
-  'CATEGORY-IMAGE' = 'category-images',
+  'ITEM-IMAGES' = 'item-images',
+  'CATEGORY-IMAGES' = 'category-images',
 }

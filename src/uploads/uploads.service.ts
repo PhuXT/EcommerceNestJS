@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BUCKETPATH_ENUM } from './uploads.contant';
+import { BUCKETPATH_ENUM } from './uploads.constant';
 import { S3 } from 'aws-sdk';
-import { arrayBuffer } from 'stream/consumers';
 
 @Injectable()
 export class UploadsService {
@@ -21,11 +20,11 @@ export class UploadsService {
     let urlKey = '';
 
     if (image) {
-      if (bucketPath === BUCKETPATH_ENUM['ITEM-IMAGE']) {
+      if (bucketPath === BUCKETPATH_ENUM['ITEM-IMAGES']) {
         urlKey = `${bucketPath}/avatar/${Date.now()}-${image.originalname}`;
       }
 
-      if (bucketPath === BUCKETPATH_ENUM['CATEGORY-IMAGE']) {
+      if (bucketPath === BUCKETPATH_ENUM['CATEGORY-IMAGES']) {
         urlKey = `${bucketPath}/banner/${Date.now()}-${image.originalname}`;
       }
       const imageUpload = await this.uploadS3(image.buffer, urlKey);
@@ -66,7 +65,6 @@ export class UploadsService {
           this.logger.error(err);
           reject(err.message);
         }
-        // console.log(data);
         resolve({
           key: data.Key,
           publicUrl: data.Location,

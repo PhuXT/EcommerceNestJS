@@ -69,19 +69,19 @@ export class ConFlictExceptionDto {
   error: string;
 }
 
-// export class UnauthorizedExceptionDto {
-//   @ApiProperty({ type: Number, default: 401 })
-//   @IsString()
-//   @IsNumber()
-//   statusCode: number;
+export class NotFoundExceptionDto {
+  @ApiProperty({ type: Number, default: 404 })
+  @IsString()
+  @IsNumber()
+  statusCode: number;
 
-//   @ApiProperty({ type: String })
-//   @IsString()
-//   @IsNotEmpty()
-//   message: string;
+  @ApiProperty({ type: String })
+  @IsString()
+  @IsNotEmpty()
+  message: string;
 
-//   @ApiProperty({ type: String })
-//   @IsString()
-//   @IsNotEmpty()
-//   error: string;
-// }
+  @ApiProperty({ type: String })
+  @IsString()
+  @IsNotEmpty()
+  error: string;
+}

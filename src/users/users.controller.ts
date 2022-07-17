@@ -5,27 +5,46 @@ import {
   Get,
   Param,
   Patch,
-  Req,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Roles } from 'src/auth/role.decorator';
 import { ROLE_ENUM } from './users.constant';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/role.guard';
 import { IUser } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  InternalServerErrorExceptionDto,
+  UnauthorizedExceptionDto,
+} from 'src/swangger/swangger.dto';
+import { UserSwanggerDto } from './dto/swangger/user.swangger';
 
 @ApiTags('users')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiInternalServerErrorResponse({
+  type: InternalServerErrorExceptionDto,
+  description: 'Server error',
+})
+@ApiUnauthorizedResponse({
+  type: UnauthorizedExceptionDto,
+  description: 'need login',
+})
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // [GET] api/v1/users
+  // [GET] api/v1/users'
+  @ApiOkResponse({ type: UserSwanggerDto })
   @Roles(ROLE_ENUM.ADMIN)
   @Get()
   getAll(): Promise<IUser[]> {
@@ -33,6 +52,7 @@ export class UsersController {
   }
 
   // [Delete] api/v1/users/:id
+  @ApiOkResponse({ type: Boolean })
   @Roles(ROLE_ENUM.ADMIN)
   @Delete(':id')
   delete(@Param('id') id: string): Promise<boolean> {
@@ -40,6 +60,7 @@ export class UsersController {
   }
 
   // [Patch] api/v1/users
+  @ApiOkResponse({ type: UserSwanggerDto })
   @Roles(ROLE_ENUM.ADMIN, ROLE_ENUM.USER)
   @Patch('')
   updateInfo(
