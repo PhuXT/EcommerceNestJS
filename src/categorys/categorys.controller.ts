@@ -45,7 +45,7 @@ import {
 })
 @ApiUnauthorizedResponse({
   type: UnauthorizedExceptionDto,
-  description: 'Login with role ADMIN',
+  description: 'login with non-admin rights',
 })
 @Controller('categories')
 export class CategorysController {
@@ -74,6 +74,10 @@ export class CategorysController {
   // [DELETE] api/v1/categories/:categoryId
   @ApiBody({ type: String })
   @ApiOkResponse({ type: Boolean, description: 'Return boolean' })
+  @ApiBadRequestResponse({
+    type: BadRequestDto,
+    description: "Can't delete category containing products",
+  })
   @Delete(':categoryId')
   deleteCategory(@Param('categoryId') categoryId: string): Promise<boolean> {
     return this.categoryService.delete(categoryId);
@@ -91,7 +95,8 @@ export class CategorysController {
 
   // [GET] api/v1/categories/active'
   @ApiOkResponse({
-    description: 'Return list category active',
+    type: [CategorySwanggerRespone],
+    description: 'Return list category active order by prioriry ASC',
   })
   @Get('/active')
   getCategoriesActive(): Promise<ICategory[]> {
@@ -102,6 +107,10 @@ export class CategorysController {
   @ApiOkResponse({
     type: CategorySwanggerRespone,
     description: 'return category updated',
+  })
+  @ApiConflictResponse({
+    type: ConFlictExceptionDto,
+    description: 'Update category name already exist',
   })
   @Patch('/:categoryId')
   update(

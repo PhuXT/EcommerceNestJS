@@ -1,6 +1,5 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { log } from 'console';
 import { Model } from 'mongoose';
 import { EntityRepository } from '../database/entity.repository';
 import { ICreateItem } from './entities/item.entity';
@@ -18,18 +17,18 @@ export class ItemsRepository extends EntityRepository<ItemDocument> {
     } catch (error) {
       if (error.keyPattern) {
         if (error.keyPattern.barCode) {
-          throw new BadRequestException('Barcode is unique');
+          throw new ConflictException('Barcode is unique');
         }
 
         if (error.keyPattern.name) {
-          throw new BadRequestException('Name is unique');
+          throw new ConflictException('Name is unique');
         }
       }
     }
     return null;
   }
 
-  async findOne(id: {}): Promise<ItemDocument> {
+  async findOne(id): Promise<ItemDocument> {
     let item: ItemDocument;
     try {
       item = await super.findOne({ _id: id });

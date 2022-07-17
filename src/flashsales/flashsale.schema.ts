@@ -47,6 +47,7 @@ FlashSaleSchema.pre<IFlashSaleModel>('save', async function () {
   const endTimeBiggest = await this.db
     .collection('flashsales')
     .findOne({}, { sort: { $natural: -1 } });
+
   if (endTimeBiggest) {
     const endTimeBiggestMilisecond = new Date(endTimeBiggest.endTime).getTime();
 

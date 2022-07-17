@@ -12,27 +12,70 @@ import {
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/role.guard';
 import { IItem } from './entities/item.entity';
+import { SORT_ENUM } from 'src/database/database.contant';
+import {
+  BadRequestDto,
+  ConFlictExceptionDto,
+  InternalServerErrorExceptionDto,
+  UnauthorizedExceptionDto,
+} from 'src/swangger/swangger.dto';
 import { Roles } from 'src/auth/role.decorator';
 import { ROLE_ENUM } from 'src/users/users.constant';
-import { SORT_ENUM } from 'src/database/database.contant';
+import { ItemSwangger } from './dto/swangger/item-swangger.dto';
 
 @ApiTags('items')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(ROLE_ENUM.ADMIN)
+// @ApiBearerAuth()
+// @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiInternalServerErrorResponse({
+  type: InternalServerErrorExceptionDto,
+  description: 'Server error',
+})
 @Controller('items')
 export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
 
+  // [POST] create
+  @ApiCreatedResponse({
+    type: ItemSwangger,
+    description: 'return item created',
+  })
+  @ApiConflictResponse({
+    type: ConFlictExceptionDto,
+    description: 'Email or barcode already exist',
+  })
+  @ApiBadRequestResponse({
+    type: BadRequestDto,
+    description: 'name, barcode, cost, price, image not empty',
+  })
+  @ApiUnauthorizedResponse({
+    type: UnauthorizedExceptionDto,
+    description: 'login with non-admin rights',
+  })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLE_ENUM.ADMIN)
   @Post()
   create(@Body() createItemDto: CreateItemDto): Promise<IItem> {
     return this.itemsService.create(createItemDto);
   }
 
+  // [GET] findall
+  @ApiOkResponse()
+  // @Roles(ROLE_ENUM.ADMIN, ROLE_ENUM.USER)
+  @ApiOkResponse({ type: [ItemSwangger], description: 'return list items' })
   @Get('')
   findAll(
     @Query('page') page?: number,
@@ -43,11 +86,23 @@ export class ItemsController {
     return this.itemsService.findAll(page, limit, sortBy, options);
   }
 
+  // [GET] findOne
+  @ApiOkResponse({ type: ItemSwangger, description: 'return items' })
+  @ApiBadRequestResponse({
+    type: BadRequestDto,
+    description: 'Items not exist or id not format objId',
+  })
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<IItem> | null {
     return this.itemsService.findOne(id);
   }
 
+  // [GET] update
+  @ApiOkResponse({ type: ItemSwangger, description: 'return item updated' })
+  @ApiConflictResponse({
+    type: ConFlictExceptionDto,
+    description: 'Name item or barcode already exist',
+  })
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -56,6 +111,12 @@ export class ItemsController {
     return this.itemsService.update(id, updateItemDto);
   }
 
+  // DELETE
+  @ApiOkResponse({ type: Boolean, description: 'return booean' })
+  @ApiBadRequestResponse({
+    type: BadRequestDto,
+    description: 'Item sold > 0 ,Id not format objId',
+  })
   @Delete(':id')
   remove(@Param('id') id: string): Promise<boolean> {
     return this.itemsService.remove(id);

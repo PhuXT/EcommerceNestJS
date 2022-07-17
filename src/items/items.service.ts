@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { time } from 'console';
 import { SORT_ENUM } from 'src/database/database.contant';
 import { FlashsalesService } from 'src/flashsales/flashsales.service';
@@ -12,11 +16,13 @@ export class ItemsService {
     private flashsalesService: FlashsalesService,
   ) {}
 
+  // CREATE
   async create(createItemDto: ICreateItem): Promise<IItem> {
     createItemDto['stocks'] = createItemDto.quantity;
     return this.itemRepository.create(createItemDto);
   }
 
+  // FINALL
   async findAll(
     page?: number,
     limit?: number,
@@ -24,6 +30,7 @@ export class ItemsService {
     options?: SORT_ENUM,
   ): Promise<IItem[]> | null {
     const skip = limit * (page - 1);
+
     const listItem = Promise.all([
       this.flashsalesService.findFlashSaleNow(),
       this.itemRepository.findWithOptions({}, skip, limit, sortBy, options),
@@ -50,8 +57,23 @@ export class ItemsService {
     return this.itemRepository.findOne({ _id: id });
   }
 
-  update(id: string, updateItemDto: IUpdateItem) {
-    return this.itemRepository.findOneAndUpdate({ _id: id }, updateItemDto);
+  // UPDATE
+  async update(id: string, updateItemDto: IUpdateItem) {
+    try {
+      const itemUpdated = await this.itemRepository.findOneAndUpdate(
+        { _id: id },
+        updateItemDto,
+      );
+      return itemUpdated;
+    } catch (error) {
+      if (error.keyPattern) {
+        if (error.keyValue.name)
+          throw new ConflictException('Name item already exits');
+
+        if (error.keyValue.barCode)
+          throw new ConflictException('Name item already exits');
+      }
+    }
   }
 
   async remove(id: string): Promise<boolean> {
@@ -90,5 +112,13 @@ export class ItemsService {
         },
       },
     );
+  }
+
+  updateMany(filterQuery, updateItemDto) {
+    return this.itemRepository.updateMany(filterQuery, updateItemDto);
+  }
+
+  find(filterQuery) {
+    return this.itemRepository.find(filterQuery);
   }
 }

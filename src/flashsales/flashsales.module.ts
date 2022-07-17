@@ -10,6 +10,8 @@ import { FlashSaleRepository } from './flashsales.repository';
     MongooseModule.forFeature([
       { name: FlashSale.name, schema: FlashSaleSchema },
     ]),
+    // forwardRef(() => ItemsModule),
+    // ItemsModule,
   ],
   controllers: [FlashsalesController],
   providers: [FlashsalesService, FlashSaleRepository],

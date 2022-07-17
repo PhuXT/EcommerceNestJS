@@ -27,10 +27,10 @@ export abstract class EntityRepository<T extends Document> {
     options: SORT_ENUM = SORT_ENUM.ASC,
   ): Promise<T[] | null> {
     const sortObj = {};
+    sortObj[sortBy] = 1;
     if (options === SORT_ENUM.DEST) {
       sortObj[sortBy] = -1;
     }
-    sortObj[sortBy] = 1;
     return this.entityModel
       .find(entityFilterQuery)
       .skip(skip)
@@ -67,6 +67,19 @@ export abstract class EntityRepository<T extends Document> {
     const updateResult = await this.entityModel.updateOne(
       entityFilterQuery,
       updateEntitydata,
+    );
+    return updateResult;
+  }
+
+  // tu tao
+  async updateMany(
+    entityFilterQuery: FilterQuery<T>,
+    updateEntitydata: UpdateQuery<unknown>,
+  ): Promise<unknown> {
+    const updateResult = await this.entityModel.updateMany(
+      entityFilterQuery,
+      updateEntitydata,
+      { multi: true },
     );
     return updateResult;
   }

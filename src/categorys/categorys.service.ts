@@ -3,26 +3,42 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { ItemsService } from 'src/items/items.service';
 import { STATUS_ENUM } from './categorys.constant';
 import { CategoryRepository } from './categotys.repository';
 import { ICategory, ICategoryUpdate } from './entity/category.entity';
 
 @Injectable()
 export class CategorysService {
-  constructor(private categoryRepository: CategoryRepository) {}
+  constructor(
+    private categoryRepository: CategoryRepository,
+    private itemService: ItemsService,
+  ) {}
 
+  // CREATE
   async create(createCategoryDto: ICategory): Promise<ICategory> {
     return this.categoryRepository.create(createCategoryDto);
   }
 
-  delete(categoryId: string): Promise<boolean> {
+  // DELETE
+  async delete(categoryId: string): Promise<boolean> {
+    const itemWiThThisCategory = await this.itemService.find({
+      'category.id': categoryId,
+    });
+    console.log(itemWiThThisCategory[0]);
+
+    if (itemWiThThisCategory[0]) {
+      throw new BadRequestException('You cannot delete this item');
+    }
     return this.categoryRepository.deleteMany({ _id: categoryId });
   }
 
+  // GET ALL
   getCategories(): Promise<ICategory[]> {
     return this.categoryRepository.find({});
   }
 
+  // GET ACTIVE ASC
   async getCategoriesActive(): Promise<ICategory[]> {
     try {
       const CategoriesActive = await this.categoryRepository.find({
@@ -40,6 +56,7 @@ export class CategorysService {
     }
   }
 
+  // GET BY ID
   getCategory(categoryName: string): Promise<ICategory> {
     return this.categoryRepository.findOne({ categoryName });
   }
@@ -49,6 +66,11 @@ export class CategorysService {
     categoryId: string,
     updateCategoryDto: ICategoryUpdate,
   ): Promise<ICategory> {
+    let updateted = this.categoryRepository.findOneAndUpdateOverriding(
+      categoryId,
+      updateCategoryDto,
+    );
+
     if (updateCategoryDto.priority) {
       const listCategoryActive = await this.categoryRepository.find({
         status: STATUS_ENUM.ACTIVE,
@@ -66,16 +88,32 @@ export class CategorysService {
       );
     }
 
+    // Update categoryName of collection item and collection Category
     if (updateCategoryDto.categoryName) {
+      const category = await this.categoryRepository.findOne({
+        _id: categoryId,
+      });
+
+      const oldCategoryName = category.categoryName;
+      const arrUpdate = [];
       const categoryUpdate = this.categoryRepository.findOneAndUpdateOverriding(
         categoryId,
         updateCategoryDto,
       );
+      arrUpdate.push(categoryUpdate);
+
+      const updateCategoryOfItem = this.itemService.updateMany(
+        { 'category.name': oldCategoryName },
+        { $set: { 'category.name': updateCategoryDto.categoryName } },
+      );
+      arrUpdate.push(updateCategoryOfItem);
+
+      Promise.all(arrUpdate).then((value) => {
+        updateted = value[0];
+      });
     }
-    return this.categoryRepository.findOneAndUpdateOverriding(
-      categoryId,
-      updateCategoryDto,
-    );
+
+    return updateted;
   }
 
   //Funtion update priority

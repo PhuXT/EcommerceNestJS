@@ -10,16 +10,16 @@ import mongoose from 'mongoose';
 import { STATUS_ENUM } from 'src/categorys/categorys.constant';
 
 export class CategorySwanggerRespone {
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({ type: String })
   @IsNotEmpty()
   _id: mongoose.Schema.Types.ObjectId;
 
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({ type: String })
   @IsNotEmpty()
   @IsString()
   categoryName: string;
 
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({ type: String })
   @IsNotEmpty()
   @IsString()
   image: string;
@@ -33,17 +33,17 @@ export class CategorySwanggerRespone {
   @IsEnum(STATUS_ENUM)
   status: STATUS_ENUM;
 
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({ type: String })
   @IsNotEmpty()
   @IsNumber()
   priority: number;
 
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({ type: Date })
   @IsNotEmpty()
   @IsDateString()
   createdAt: Date;
 
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({ type: Date })
   @IsNotEmpty()
   @IsDateString()
   updatedAt: Date;
