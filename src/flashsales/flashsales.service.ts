@@ -1,17 +1,52 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { FilterQuery } from 'mongoose';
-import { UpdateFlashsaleDto } from './dto/update-flashsale.dto';
 import { IFlashSale } from './entities/flashsale.entity';
 import { STATUS_FLASHSALE_ENUM } from './flashsale.constain';
 import { FlashSaleDocument } from './flashsale.schema';
 import { FlashSaleRepository } from './flashsales.repository';
+import { CronJob } from 'cron';
+import { Cron, SchedulerRegistry } from '@nestjs/schedule';
+import { UsersService } from 'src/users/users.service';
+import { async } from 'rxjs';
+import { EmailsService } from 'src/emails/emails.service';
 
 @Injectable()
 export class FlashsalesService {
-  constructor(private flashsaleRepository: FlashSaleRepository) {}
+  constructor(
+    private flashsaleRepository: FlashSaleRepository,
+    private schedulerRegistry: SchedulerRegistry,
+    private userService: UsersService,
+    private emailService: EmailsService,
+  ) {}
 
-  create(createFlashsaleDto: IFlashSale): Promise<IFlashSale> {
-    return this.flashsaleRepository.create(createFlashsaleDto);
+  async create(createFlashsaleDto: IFlashSale): Promise<IFlashSale> {
+    const flashSale = await this.flashsaleRepository.create(createFlashsaleDto);
+    // send mail cronjob
+    const startTime = createFlashsaleDto.startTime;
+    const conJobTime = new Date(startTime).getTime() - 15 * 60 * 1000;
+
+    const job = new CronJob(new Date(conJobTime), async () => {
+      const listUser = await this.userService.find();
+      const listPromiseSendMail = [];
+
+      listUser.forEach((user) => {
+        listPromiseSendMail.push(
+          this.emailService.sendMessage(
+            user.email,
+            `${createFlashsaleDto.name} sale will start at ${createFlashsaleDto.startTime}`,
+          ),
+        );
+      });
+
+      Promise.all(listPromiseSendMail).then(() => {
+        'Send email flash sale done';
+      });
+    });
+
+    this.schedulerRegistry.addCronJob('send flashSale noti', job);
+    job.start();
+
+    return flashSale;
   }
 
   async findAll(): Promise<IFlashSale[]> {

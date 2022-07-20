@@ -14,11 +14,13 @@ import { ItemsModule } from './items/items.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { FlashsalesModule } from './flashsales/flashsales.module';
 import { OrdersModule } from './orders/orders.module';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGO_URL),
     MulterModule.register({
       dest: './uploadedFiles',

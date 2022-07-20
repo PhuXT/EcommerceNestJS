@@ -4,14 +4,16 @@ import { FlashsalesController } from './flashsales.controller';
 import { FlashSale, FlashSaleSchema } from './flashsale.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FlashSaleRepository } from './flashsales.repository';
+import { UsersModule } from 'src/users/users.module';
+import { EmailsModule } from 'src/emails/emails.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: FlashSale.name, schema: FlashSaleSchema },
     ]),
-    // forwardRef(() => ItemsModule),
-    // ItemsModule,
+    UsersModule,
+    EmailsModule,
   ],
   controllers: [FlashsalesController],
   providers: [FlashsalesService, FlashSaleRepository],

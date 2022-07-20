@@ -206,7 +206,7 @@ export class OrdersService {
     return `Order cancel`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+  delete(id: string): Promise<boolean> {
+    return this.ordersRepositoty.deleteMany({ _id: id });
   }
 }

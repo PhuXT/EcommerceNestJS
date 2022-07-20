@@ -7,6 +7,7 @@ import {
   Param,
   UseGuards,
   Req,
+  Delete,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -87,5 +88,13 @@ export class OrdersController {
   @Patch(':id/cancellation')
   cancel(@Param('id') id: string): Promise<string> {
     return this.ordersService.update(id);
+  }
+
+  // [DELETE]
+  @ApiOkResponse({ type: Boolean })
+  @Roles(ROLE_ENUM.ADMIN)
+  @Delete(':id')
+  delete(@Param('id') id: string): Promise<boolean> {
+    return this.ordersService.delete(id);
   }
 }

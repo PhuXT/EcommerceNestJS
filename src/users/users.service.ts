@@ -59,8 +59,8 @@ export class UsersService {
     // return this.userRepository.findOneAndUpdate(id, updateUserDto);
   }
 
-  async find(): Promise<IUser[]> {
-    const listUser = await this.userRepository.find({});
+  async find(filterQuery = {}): Promise<IUser[]> {
+    const listUser = await this.userRepository.find(filterQuery);
 
     const result = listUser.map((user) => {
       const { password, ...userNotInlcudePass } = user['_doc'];
