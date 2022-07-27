@@ -23,10 +23,10 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { IVoucher } from './entities/voucher.entity';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/role.guard';
-import { Roles } from 'src/auth/role.decorator';
-import { ROLE_ENUM } from 'src/users/users.constant';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/role.guard';
+import { Roles } from '../auth/role.decorator';
+import { ROLE_ENUM } from '../users/users.constant';
 import { VoucherSwanggerDto } from './dto/swangger/voucher-swangger.dto';
 import {
   BadRequestDto,
@@ -34,7 +34,7 @@ import {
   InternalServerErrorExceptionDto,
   NotFoundExceptionDto,
   UnauthorizedExceptionDto,
-} from 'src/swangger/swangger.dto';
+} from '../swangger/swangger.dto';
 
 @ApiTags('vouchers')
 @ApiInternalServerErrorResponse({

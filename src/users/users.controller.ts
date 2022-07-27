@@ -16,16 +16,16 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/auth/role.decorator';
+import { Roles } from '../auth/role.decorator';
 import { ROLE_ENUM } from './users.constant';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/role.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/role.guard';
 import { IUser } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
   InternalServerErrorExceptionDto,
   UnauthorizedExceptionDto,
-} from 'src/swangger/swangger.dto';
+} from '../swangger/swangger.dto';
 import { UserSwanggerDto } from './dto/swangger/user.swangger';
 
 @ApiTags('users')

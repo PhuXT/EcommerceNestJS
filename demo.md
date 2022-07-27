@@ -1,5 +1,4 @@
 new Date(Date.now()).toISOString()
-2022-07-17T09:46:34.378Z
 
 bucketPath Enum value
 item-images

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ROLE_ENUM } from 'src/users/users.constant';
+import { ROLE_ENUM } from '../../users.constant';
 
 export class UserSwanggerDto {
   @ApiProperty({ type: String })

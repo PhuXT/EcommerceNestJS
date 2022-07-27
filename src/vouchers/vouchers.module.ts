@@ -4,7 +4,7 @@ import { VouchersController } from './vouchers.controller';
 import { VoucherRepository } from './vouchers.repository';
 import { Voucher, VoucherSchema } from './voucher.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CategorysModule } from 'src/categorys/categorys.module';
+import { CategorysModule } from '../categorys/categorys.module';
 
 @Module({
   imports: [

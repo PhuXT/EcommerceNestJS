@@ -4,7 +4,7 @@ import { ItemsController } from './items.controller';
 import { Item, ItemSchema } from './item.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ItemsRepository } from './items.repository';
-import { FlashsalesModule } from 'src/flashsales/flashsales.module';
+import { FlashsalesModule } from '../flashsales/flashsales.module';
 
 @Module({
   imports: [

@@ -17,16 +17,16 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Roles } from 'src/auth/role.decorator';
-import { RolesGuard } from 'src/auth/role.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Roles } from '../auth/role.decorator';
+import { RolesGuard } from '../auth/role.guard';
 import {
   BadRequestDto,
   InternalServerErrorExceptionDto,
   UnauthorizedExceptionDto,
-} from 'src/swangger/swangger.dto';
-import { imageFileFilter } from 'src/users/multer/multer.config';
-import { ROLE_ENUM } from 'src/users/users.constant';
+} from '../swangger/swangger.dto';
+import { imageFileFilter } from '../users/multer/multer.config';
+import { ROLE_ENUM } from '../users/users.constant';
 import { NewFileDetailDto } from './dto/new-file-detail.dto';
 import { UploadSwanggerDto } from './dto/upload-swangger.dto';
 import { UploadsService } from './uploads.service';

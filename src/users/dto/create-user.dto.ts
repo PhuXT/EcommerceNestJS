@@ -1,7 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEmail,
-  IsEmpty,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -9,8 +8,6 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { STATUS_ENUM } from 'src/categorys/categorys.constant';
-import { ROLE_ENUM } from '../users.constant';
 
 export class CreateUserDto {
   @ApiProperty({ required: true, type: String })

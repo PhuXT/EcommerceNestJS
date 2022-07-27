@@ -7,7 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 import mongoose from 'mongoose';
-import { STATUS_ENUM } from 'src/categorys/categorys.constant';
+import { STATUS_ENUM } from '../../../categorys/categorys.constant';
 
 export class CategorySwanggerRespone {
   @ApiProperty({ type: String })

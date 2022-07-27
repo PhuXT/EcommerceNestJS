@@ -3,7 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { ItemsService } from 'src/items/items.service';
+import { ItemsService } from '../items/items.service';
 import { STATUS_ENUM } from './categorys.constant';
 import { CategoryRepository } from './categotys.repository';
 import { ICategory, ICategoryUpdate } from './entity/category.entity';

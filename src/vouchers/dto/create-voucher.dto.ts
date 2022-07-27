@@ -4,15 +4,11 @@ import {
   IsDateString,
   IsNotEmpty,
   IsNumber,
-  IsNumberString,
   IsString,
   Max,
   Min,
 } from 'class-validator';
-import {
-  IsEndTime,
-  IsStartTime,
-} from 'src/flashsales/dto/custom-validator/validator-flashsale';
+import { IsEndTime, IsStartTime } from '../../common/custom-validator.dto';
 
 export class CreateVoucherDto {
   @ApiProperty({ type: Date })

@@ -4,8 +4,8 @@ import { FlashsalesController } from './flashsales.controller';
 import { FlashSale, FlashSaleSchema } from './flashsale.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FlashSaleRepository } from './flashsales.repository';
-import { UsersModule } from 'src/users/users.module';
-import { EmailsModule } from 'src/emails/emails.module';
+import { UsersModule } from '../users/users.module';
+import { EmailsModule } from '../emails/emails.module';
 
 @Module({
   imports: [

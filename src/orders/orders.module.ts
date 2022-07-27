@@ -4,10 +4,10 @@ import { OrdersController } from './orders.controller';
 import { Order, OrderSchema } from './order.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OrdersRepository } from './order.repository';
-import { UsersModule } from 'src/users/users.module';
-import { FlashsalesModule } from 'src/flashsales/flashsales.module';
-import { VouchersModule } from 'src/vouchers/vouchers.module';
-import { ItemsModule } from 'src/items/items.module';
+import { UsersModule } from '../users/users.module';
+import { FlashsalesModule } from '../flashsales/flashsales.module';
+import { VouchersModule } from '../vouchers/vouchers.module';
+import { ItemsModule } from '../items/items.module';
 
 @Module({
   imports: [

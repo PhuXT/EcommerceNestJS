@@ -5,10 +5,9 @@ import { STATUS_FLASHSALE_ENUM } from './flashsale.constain';
 import { FlashSaleDocument } from './flashsale.schema';
 import { FlashSaleRepository } from './flashsales.repository';
 import { CronJob } from 'cron';
-import { Cron, SchedulerRegistry } from '@nestjs/schedule';
-import { UsersService } from 'src/users/users.service';
-import { async } from 'rxjs';
-import { EmailsService } from 'src/emails/emails.service';
+import { SchedulerRegistry } from '@nestjs/schedule';
+import { UsersService } from '../users/users.service';
+import { EmailsService } from '../emails/emails.service';
 
 @Injectable()
 export class FlashsalesService {
@@ -21,30 +20,31 @@ export class FlashsalesService {
 
   async create(createFlashsaleDto: IFlashSale): Promise<IFlashSale> {
     const flashSale = await this.flashsaleRepository.create(createFlashsaleDto);
-    // send mail cronjob
-    const startTime = createFlashsaleDto.startTime;
-    const conJobTime = new Date(startTime).getTime() - 15 * 60 * 1000;
+    // send mail cronjob-------------------------
+    // const startTime = createFlashsaleDto.startTime;
+    // const conJobTime = new Date(startTime).getTime() - 3 * 60 * 1000;
+    // console.log(conJobTime);
 
-    const job = new CronJob(new Date(conJobTime), async () => {
-      const listUser = await this.userService.find();
-      const listPromiseSendMail = [];
+    // const job = new CronJob(new Date(conJobTime), async () => {
+    //   const listUser = await this.userService.find();
+    //   const listPromiseSendMail = [];
 
-      listUser.forEach((user) => {
-        listPromiseSendMail.push(
-          this.emailService.sendMessage(
-            user.email,
-            `${createFlashsaleDto.name} sale will start at ${createFlashsaleDto.startTime}`,
-          ),
-        );
-      });
+    //   listUser.forEach((user) => {
+    //     listPromiseSendMail.push(
+    //       this.emailService.sendMessage(
+    //         user.email,
+    //         `${createFlashsaleDto.name} sale will start at ${createFlashsaleDto.startTime}`,
+    //       ),
+    //     );
+    //   });
 
-      Promise.all(listPromiseSendMail).then(() => {
-        'Send email flash sale done';
-      });
-    });
+    //   Promise.all(listPromiseSendMail).then(() => {
+    //     'Send email flash sale done';
+    //   });
+    // });
 
-    this.schedulerRegistry.addCronJob('send flashSale noti', job);
-    job.start();
+    // this.schedulerRegistry.addCronJob('send flashSale noti', job);
+    // job.start();
 
     return flashSale;
   }

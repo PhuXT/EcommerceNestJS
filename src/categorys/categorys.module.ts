@@ -4,8 +4,7 @@ import { CategorysController } from './categorys.controller';
 import { CategoryRepository } from './categotys.repository';
 import { Category, CategorySchema } from './categotys.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UploadsModule } from 'src/uploads/uploads.module';
-import { ItemsModule } from 'src/items/items.module';
+import { ItemsModule } from '../items/items.module';
 @Module({
   imports: [
     MongooseModule.forFeature([

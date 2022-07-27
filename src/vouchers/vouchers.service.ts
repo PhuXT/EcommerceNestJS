@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CategorysService } from 'src/categorys/categorys.service';
+import { CategorysService } from '../categorys/categorys.service';
 import { UpdateVoucherDto } from './dto/update-voucher.dto';
 import { IVoucher } from './entities/voucher.entity';
 import { VoucherRepository } from './vouchers.repository';

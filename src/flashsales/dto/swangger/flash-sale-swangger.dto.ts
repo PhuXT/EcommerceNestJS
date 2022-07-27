@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsArray, ValidateNested } from 'class-validator';
 import mongoose from 'mongoose';
-import { STATUS_FLASHSALE_ENUM } from 'src/flashsales/flashsale.constain';
+import { STATUS_FLASHSALE_ENUM } from '../../flashsale.constain';
 
 export class Item {
   @ApiProperty({ type: String })

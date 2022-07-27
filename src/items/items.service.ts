@@ -3,9 +3,8 @@ import {
   ConflictException,
   Injectable,
 } from '@nestjs/common';
-import { time } from 'console';
-import { SORT_ENUM } from 'src/database/database.contant';
-import { FlashsalesService } from 'src/flashsales/flashsales.service';
+import { SORT_ENUM } from '../database/database.contant';
+import { FlashsalesService } from '../flashsales/flashsales.service';
 import { ICreateItem, IItem, IUpdateItem } from './entities/item.entity';
 import { ItemsRepository } from './items.repository';
 

@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FlashsalesService } from 'src/flashsales/flashsales.service';
-import { ItemsService } from 'src/items/items.service';
-import { UsersService } from 'src/users/users.service';
-import { VouchersService } from 'src/vouchers/vouchers.service';
+import { FlashsalesService } from '../flashsales/flashsales.service';
+import { ItemsService } from '../items/items.service';
+import { UsersService } from '../users/users.service';
+import { VouchersService } from '../vouchers/vouchers.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { CreateItemOrder, IOrder, UserOrder } from './entities/order.entity';
 import { OrdersRepository } from './order.repository';
